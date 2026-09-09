@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
-import { color, borderWidth, type as t, space } from '../../theme/tokens';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { color, type as t, space } from '../../theme/tokens';
 import { SheetHeader } from '../../components/sheetheader';
 import { SegmentTabs } from '../../components/segmenttabs';
 import { TextField } from '../../components/textfield';
 import { Select } from '../../components/select';
 import { SwitchToggle } from '../../components/switchtoggle';
 import { PillButton } from '../../components/pillbutton';
+import { ProductListSearch } from '../../components/productlistsearch';
 import { api, type product, type partner, type careType, type route } from '../../services/api';
 
 const careTypeOptions = [
@@ -34,35 +35,10 @@ type props = {
 };
 
 export function LogFlow({ onClose, onDone, initialProduct, initialAction }: props) {
-  const [query, setQuery] = useState('');
-  const [products, setProducts] = useState<product[]>([]);
   const [selected, setSelected] = useState<product | null>(initialProduct ?? null);
 
-  useEffect(() => {
-    api.products.search(query).then(setProducts);
-  }, [query]);
-
   if (!selected) {
-    return (
-      <View style={styles.root}>
-        <SheetHeader title="Log" onClose={onClose} />
-        <View style={styles.searchWrap}>
-          <TextField placeholder="Search your products" value={query} onChangeText={setQuery} autoCapitalize="none" />
-        </View>
-        <ScrollView>
-          {products.map((p) => (
-            <Pressable key={p.id} style={styles.row} onPress={() => setSelected(p)}>
-              <View>
-                <Text style={styles.rowTitle}>{p.name}</Text>
-                <Text style={styles.rowSubtitle}>{p.category}</Text>
-              </View>
-              <Text style={styles.rowBadge}>{p.status === 'draft' ? 'Draft' : p.careScore ? `Score ${p.careScore}` : ''}</Text>
-            </Pressable>
-          ))}
-          {products.length === 0 ? <Text style={styles.empty}>No products match "{query}"</Text> : null}
-        </ScrollView>
-      </View>
-    );
+    return <ProductListSearch title="Log" onClose={onClose} onSelect={setSelected} />;
   }
 
   return (
@@ -215,24 +191,10 @@ function ProductDetail({
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  searchWrap: { padding: space.lg, paddingBottom: 0 },
   content: { padding: space.lg, gap: space.md },
   form: { gap: space.md },
   title: { ...t.h3, color: color.foreground },
   textarea: { minHeight: 90, textAlignVertical: 'top' },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   toggleLabel: { ...t.bodySmall, color: color.foreground, flex: 1 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: space.lg,
-    paddingVertical: space.md,
-    borderBottomWidth: borderWidth.hairline,
-    borderBottomColor: color.border,
-  },
-  rowTitle: { ...t.body, color: color.foreground },
-  rowSubtitle: { ...t.bodySmall, color: color.mutedForeground },
-  rowBadge: { ...t.eyebrow, color: color.mint },
-  empty: { ...t.bodySmall, color: color.mutedForeground, padding: space.lg },
 });
