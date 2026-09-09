@@ -1,0 +1,133 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[margin=2.0cm]{geometry}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,maxbibnames=99]{biblatex}
+
+\addbibresource{refs.bib}
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=black}
+
+\setlength{\parskip}{0.45em}
+\AtBeginBibliography{\footnotesize}
+\setlength{\bibitemsep}{0.05em}
+
+\title{\vspace{-1.4cm}Pre-assignment: AI Solution Sprint 2026}
+\author{Tauheed Butt \\ \small \href{https://tauheed.dev}{tauheed.dev}}
+\date{6 September 2026}
+
+\begin{document}
+
+\maketitle
+
+\section*{What is a hackathon?}
+
+A hackathon is a short event where people form teams and build something in a
+fixed amount of time. The limit is usually one to three days. The teams are mixed
+on purpose, so a developer, a designer and a business student end up working on
+the same problem. The problem normally comes from a real company, not from a
+textbook. At the end each team shows what it built \cite{nolte2023}.
+
+The way of working is different from a course project. There is no time to plan
+everything first. You pick a small piece, build it, show it, and fix it.
+Decisions get made quickly because the clock is always visible. Teams also talk
+to mentors from the partner company, so feedback comes back fast. Research on
+hackathons in education reports the same effects. People learn by doing, and the
+mixed teams are a large part of why \cite{medina2020}.
+
+I have seen this myself. Last year I took part in the Since AI Hackathon in
+Turku. It ran for 72 hours with more than 260 builders, and the rule was simple:
+no slide decks, only working demos \cite{sinceai_projects}. My team won the
+ElevenLabs challenge. What I learned there was that the hardest part is not the
+code. It is deciding fast what not to build.
+
+\section*{My goals for the AI Solution Sprint}
+
+My first goal is to build something the partner company can actually use. Not a
+demo that stops working on Thursday evening, but a working piece of software they
+could take into further development.
+
+My second goal follows from the first. I would like to keep working with that
+company after the event. Two days is a good way to start something longer, and
+that is what I am hoping for.
+
+My third goal is about the team. I have mostly built things alone. I want to see
+how much faster a mixed team can move when the people in it are not all
+developers.
+
+\section*{Benefits for everyone involved}
+
+\textbf{For participants.} You get exposure and real practice. You build
+something under pressure with people you have never met, which is close to how
+real work feels. You also meet companies directly, and that can turn into
+something longer term.
+
+\textbf{For the challenge owners.} They get fresh ideas on a problem they are
+already stuck on. Several teams work on the same challenge at once, so they see
+several directions in two days. Sometimes one of them is good enough to take into
+development. They also meet people they might later hire.
+
+\textbf{For everyone else.} The universities get students working on real
+industry problems. The cities behind AIStart get a stronger local tech scene
+\cite{aistart}. The venue and the sponsors get visibility, and students new
+to the field get to see how the tech industry actually works.
+
+\section*{The challenge that interests me most}
+
+I would like to work on the Rollyy challenge. Rollyy is a Finnish startup that
+builds mobile charging robots. You park your car, book a session, and the robot
+drives to your car and charges it \cite{rollyy}.
+
+Their challenge is about a bigger problem. Charging an electric car today means
+collecting apps, because every charging company wants its own app and account.
+Rollyy wants one pass instead. You book, you get access, and you pay, all in one
+flow. The hard part is that this pass must not become one more app.
+
+My idea is to keep it out of any new app. Booking would happen through an MCP
+server and a voice agent, so the driver just asks for a charger. Access would
+work through a pass in Apple Wallet or Google Wallet that the driver taps at the
+charger \cite{applepasskit}. Payment would use a card saved once through
+Apple Pay or Google Pay, charged after the session ends. Behind all of it, Rollyy
+would act as the service provider holding the driver's account, which is how
+charging networks already share customers with each other \cite{ocpi_guide}.
+
+The parts I feel confident about are the MCP server, the agents, the payment
+integration and the cloud setup. I have built all of those before. The part I
+find hard is access. I have not generated signed wallet passes before, and I do
+not yet know what identity Rollyy's own API expects. That is where I would want
+mentor time on the first day.
+
+My second choice is the Cognovo challenge, because finding and ranking manual
+work inside a company is a clean problem for AI agents.
+
+\section*{What I can bring to a team}
+
+I have over four years of full stack development experience, mostly TypeScript,
+React and Node, with PostgreSQL and AWS behind it \cite{tauheeddev}. Lately
+I have worked on AI agents: building them with AI SDKs, writing MCP servers, and
+using embeddings and retrieval. I also do product design, so I can decide what a
+screen should do, not only how to build it.
+
+In a mixed team my most useful skill is translating. I can listen to a business
+idea and say quickly whether it can be built in two days, and what a smaller
+version of it would look like. In a short event that saves a lot of time.
+
+\section*{How I used AI in this assignment}
+
+I used an AI assistant as a research and drafting tool. I gave it my own goals,
+my experience and my own view on the challenges, and asked it to find sources and
+help me structure the report.
+
+I used it most on the Rollyy challenge. The brief confused me at first, so I went
+back and forth with the assistant, arguing my own reading against it until the
+challenge became clear. That is how I reached the plan above. I then wrote and
+edited the text myself, and I opened and checked every source. I did not use AI
+output as a source.
+
+\printbibliography[title={Sources}]
+
+\end{document}
