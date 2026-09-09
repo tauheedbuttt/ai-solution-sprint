@@ -1,12 +1,12 @@
 import { useState, type ReactNode } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, Modal, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { color, borderWidth, type as t, space } from '../../theme/tokens';
+import { color, borderWidth, font, type as t, space } from '../../theme/tokens';
 import { SegmentTabs } from '../../components/segmenttabs';
 import { StatCard } from '../../components/statcard';
 import { PillButton } from '../../components/pillbutton';
 import { CaptureIdentify } from '../capture/captureidentify';
-import { api, type carePass, type carePassEvent } from '../../services/api';
+import { api, type carePass, type purchaseRecord } from '../../services/api';
 
 type view = 'capture' | 'notFound' | 'result';
 type tab = 'camera' | 'manual';
@@ -88,7 +88,17 @@ export function VerifyScreen() {
   );
 }
 
+type timelineKind = 'care' | 'repair' | 'origin';
+type timelineItem = { id: string; kind: timelineKind; label: string; date: string; note?: string };
+
 function CarePassView({ carePass, onReset }: { carePass: carePass; onReset: () => void }) {
+  const [receiptFor, setReceiptFor] = useState<purchaseRecord | null>(null);
+  const origin = carePass.purchaseHistory[0];
+  const timeline: timelineItem[] = [
+    ...carePass.history.map((event) => ({ id: event.id, kind: event.kind, label: event.label, date: event.date, note: event.note })),
+    ...(origin ? [{ id: origin.id, kind: 'origin' as const, label: 'Purchased', date: origin.date, note: `Origin of this Care Pass · ${origin.retailer}` }] : []),
+  ];
+
   return (
     <View style={styles.root}>
       <View style={styles.topBar}>
@@ -112,44 +122,48 @@ function CarePassView({ carePass, onReset }: { carePass: carePass; onReset: () =
           <StatCard label="Confidence" value={carePass.confidence} size="compact" />
           <StatCard label="Repairability" value={String(carePass.repairability)} suffix="/100" size="compact" />
           <StatCard label="Expected lifespan" value={String(carePass.expectedLifespanYears)} suffix="yrs" size="compact" />
-          <StatCard label="In use since" value={formatDate(carePass.inUseSince)} size="compact" />
         </View>
+        <StatCard label="In use since" value={formatDate(carePass.inUseSince)} size="compact" />
 
-        <Section title="Care & repair history">
-          {carePass.history.length === 0 ? (
+        <View style={styles.section}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>Lifecycle</Text>
+            <View style={styles.lifecyclePill}>
+              <Text style={styles.lifecyclePillLabel}>{carePass.nextLifeStatus}</Text>
+            </View>
+          </View>
+          <Text style={styles.sectionSubtitle}>Care, repairs and origin in one timeline</Text>
+
+          {timeline.length === 0 ? (
             <Text style={styles.sectionEmpty}>No events logged yet.</Text>
           ) : (
-            carePass.history.map((event) => <EventRow key={event.id} event={event} />)
+            <View style={styles.timelineWrap}>
+              <View style={styles.timelineLine} />
+              {timeline.map((item, i) => (
+                <TimelineRow key={item.id + i} item={item} last={i === timeline.length - 1} />
+              ))}
+            </View>
           )}
-        </Section>
-
-        <Section title="Repairs">
-          {carePass.repairs.length === 0 ? (
-            <Text style={styles.sectionEmpty}>No repairs logged.</Text>
-          ) : (
-            carePass.repairs.map((event) => <EventRow key={event.id} event={event} />)
-          )}
-        </Section>
-
-        <Section title="Next life">
-          <View style={styles.nextLifeCard}>
-            <Ionicons name="leaf-outline" size={16} color={color.mint} />
-            <Text style={styles.nextLifeLabel}>{carePass.nextLifeStatus}</Text>
-          </View>
-        </Section>
+        </View>
 
         <Section title="Purchase history">
           {carePass.purchaseHistory.length === 0 ? (
             <Text style={styles.sectionEmpty}>No purchase record on file.</Text>
           ) : (
             carePass.purchaseHistory.map((purchase) => (
-              <View key={purchase.id} style={styles.purchaseRow}>
+              <Pressable key={purchase.id} onPress={() => setReceiptFor(purchase)} style={styles.purchaseRow}>
                 <View>
                   <Text style={styles.purchaseRetailer}>{purchase.retailer}</Text>
                   <Text style={styles.purchaseDate}>{formatDate(purchase.date)}</Text>
                 </View>
-                <Text style={styles.purchasePrice}>€{purchase.price}</Text>
-              </View>
+                <View style={styles.purchaseRight}>
+                  <Text style={styles.purchasePrice}>€{purchase.price}</Text>
+                  <View style={styles.purchaseReceiptLink}>
+                    <Text style={styles.purchaseReceiptLinkLabel}>View receipt</Text>
+                    <Ionicons name="chevron-forward" size={12} color={color.mutedForeground} />
+                  </View>
+                </View>
+              </Pressable>
             ))
           )}
         </Section>
@@ -159,7 +173,93 @@ function CarePassView({ carePass, onReset }: { carePass: carePass; onReset: () =
           verified.
         </Text>
       </ScrollView>
+
+      <ReceiptModal
+        purchase={receiptFor}
+        itemName={carePass.name}
+        onClose={() => setReceiptFor(null)}
+      />
     </View>
+  );
+}
+
+const barcodeBars = [3, 1, 2, 4, 1, 3, 2, 1, 4, 2, 3, 1, 2, 4, 1, 3, 2, 4, 1, 2, 3, 1, 4, 2, 1, 3, 2, 4, 1, 2];
+
+function ReceiptModal({
+  purchase,
+  itemName,
+  onClose,
+}: {
+  purchase: purchaseRecord | null;
+  itemName: string;
+  onClose: () => void;
+}) {
+  return (
+    <Modal visible={!!purchase} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.receiptOverlay} onPress={onClose}>
+        {purchase ? (
+          <Pressable style={styles.receiptCard} onPress={() => {}}>
+            <View style={[styles.receiptScallopRow, styles.receiptScallopTop]}>
+              {barcodeBars.map((_, i) => (
+                <View key={i} style={styles.receiptScallopDot} />
+              ))}
+            </View>
+
+            <Text style={styles.receiptShop}>{purchase.retailer}</Text>
+            {purchase.address ? <Text style={styles.receiptMeta}>{purchase.address}</Text> : null}
+            {purchase.phone ? <Text style={styles.receiptMeta}>{purchase.phone}</Text> : null}
+
+            <View style={styles.receiptDivider} />
+            <Text style={styles.receiptTitle}>PURCHASE RECEIPT</Text>
+            <View style={styles.receiptDivider} />
+
+            <View style={styles.receiptLineRow}>
+              <Text style={styles.receiptLineHead}>Description</Text>
+              <Text style={styles.receiptLineHead}>Price</Text>
+            </View>
+            <View style={styles.receiptLineRow}>
+              <Text style={styles.receiptLineText}>{itemName}</Text>
+              <Text style={styles.receiptLineText}>{purchase.price.toFixed(2)}</Text>
+            </View>
+
+            <View style={styles.receiptDivider} />
+            <View style={styles.receiptLineRow}>
+              <Text style={styles.receiptTotalLabel}>Total</Text>
+              <Text style={styles.receiptTotalLabel}>€{purchase.price.toFixed(2)}</Text>
+            </View>
+
+            {purchase.card ? (
+              <View style={styles.receiptLineRow}>
+                <Text style={styles.receiptMetaRow}>Card</Text>
+                <Text style={styles.receiptMetaRow}>{purchase.card}</Text>
+              </View>
+            ) : null}
+            {purchase.approvalCode ? (
+              <View style={styles.receiptLineRow}>
+                <Text style={styles.receiptMetaRow}>Approval Code</Text>
+                <Text style={styles.receiptMetaRow}>{purchase.approvalCode}</Text>
+              </View>
+            ) : null}
+
+            <View style={styles.receiptDivider} />
+            <Text style={styles.receiptThanks}>THANK YOU!</Text>
+
+            <View style={styles.receiptBarcode}>
+              {barcodeBars.map((w, i) => (
+                <View key={i} style={{ width: w, height: '100%', backgroundColor: '#111', marginRight: 2 }} />
+              ))}
+            </View>
+            <Text style={styles.receiptFootnote}>Uploaded by owner · verified copy</Text>
+
+            <View style={[styles.receiptScallopRow, styles.receiptScallopBottom]}>
+              {barcodeBars.map((_, i) => (
+                <View key={i} style={styles.receiptScallopDot} />
+              ))}
+            </View>
+          </Pressable>
+        ) : null}
+      </Pressable>
+    </Modal>
   );
 }
 
@@ -172,15 +272,29 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function EventRow({ event }: { event: carePassEvent }) {
+const timelineIcon: Record<timelineKind, keyof typeof Ionicons.glyphMap> = {
+  care: 'sparkles-outline',
+  repair: 'build-outline',
+  origin: 'pricetag-outline',
+};
+
+const timelineDotBg: Record<timelineKind, string> = {
+  care: `${color.mint}40`,
+  repair: color.secondary,
+  origin: color.border,
+};
+
+function TimelineRow({ item, last }: { item: timelineItem; last: boolean }) {
   return (
-    <View style={styles.eventRow}>
-      <Ionicons name={event.kind === 'repair' ? 'build-outline' : 'sparkles-outline'} size={16} color={color.mint} />
-      <View style={styles.eventBody}>
-        <Text style={styles.eventLabel}>{event.label}</Text>
-        {event.note ? <Text style={styles.eventNote}>{event.note}</Text> : null}
+    <View style={[styles.timelineRow, last && styles.timelineRowLast]}>
+      <View style={[styles.timelineDot, { backgroundColor: timelineDotBg[item.kind] }]}>
+        <Ionicons name={timelineIcon[item.kind]} size={11} color={color.mint} />
       </View>
-      <Text style={styles.eventDate}>{formatDate(event.date)}</Text>
+      <View style={styles.timelineRowHead}>
+        <Text style={styles.timelineLabel}>{item.label}</Text>
+        <Text style={styles.timelineDate}>{formatDate(item.date)}</Text>
+      </View>
+      {item.note ? <Text style={styles.timelineNote}>{item.note}</Text> : null}
     </View>
   );
 }
@@ -205,31 +319,35 @@ const styles = StyleSheet.create({
   subtitle: { ...t.bodySmall, color: color.mutedForeground },
   statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
   section: { gap: space.sm },
+  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionTitle: { ...t.h3, color: color.foreground },
+  sectionSubtitle: { ...t.bodySmall, color: color.mutedForeground, marginTop: -space.xs },
   sectionEmpty: { ...t.bodySmall, color: color.mutedForeground },
-  eventRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: space.sm,
+  lifecyclePill: {
     borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-    backgroundColor: color.card,
-    padding: space.md,
+    borderColor: color.mint,
+    paddingHorizontal: space.sm,
+    paddingVertical: 4,
   },
-  eventBody: { flex: 1, gap: 2 },
-  eventLabel: { ...t.body, color: color.foreground },
-  eventNote: { ...t.bodySmall, color: color.mutedForeground },
-  eventDate: { ...t.bodySmall, color: color.mutedForeground },
-  nextLifeCard: {
-    flexDirection: 'row',
+  lifecyclePillLabel: { ...t.bodySmall, fontWeight: '600', color: color.mint },
+  timelineWrap: { position: 'relative', paddingLeft: space.xl, marginTop: space.xs },
+  timelineLine: { position: 'absolute', left: 9, top: 6, bottom: 6, width: 1.5, backgroundColor: color.border },
+  timelineRow: { position: 'relative', paddingBottom: space.lg },
+  timelineRowLast: { paddingBottom: 0 },
+  timelineDot: {
+    position: 'absolute',
+    left: -space.xl,
+    top: 0,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
-    gap: space.sm,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-    backgroundColor: color.card,
-    padding: space.md,
+    justifyContent: 'center',
   },
-  nextLifeLabel: { ...t.body, color: color.foreground },
+  timelineRowHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: space.sm },
+  timelineLabel: { ...t.body, fontWeight: '600', color: color.foreground },
+  timelineDate: { ...t.bodySmall, color: color.mutedForeground },
+  timelineNote: { ...t.bodySmall, color: color.mutedForeground, marginTop: 2 },
   purchaseRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -241,8 +359,42 @@ const styles = StyleSheet.create({
   },
   purchaseRetailer: { ...t.body, color: color.foreground },
   purchaseDate: { ...t.bodySmall, color: color.mutedForeground },
+  purchaseRight: { alignItems: 'flex-end', gap: 4 },
   purchasePrice: { ...t.body, fontWeight: '600', color: color.brownInk },
+  purchaseReceiptLink: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  purchaseReceiptLinkLabel: { ...t.bodySmall, color: color.mutedForeground },
   disclaimer: { ...t.bodySmall, color: color.mutedForeground, fontStyle: 'italic' },
+  receiptOverlay: { flex: 1, backgroundColor: color.background, alignItems: 'center', justifyContent: 'center', padding: space.lg },
+  receiptCard: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: '#f5f3ec',
+    paddingHorizontal: 22,
+    paddingTop: 14,
+    paddingBottom: 18,
+    transform: [{ rotate: '-1deg' }],
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 12,
+  },
+  receiptScallopRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  receiptScallopTop: { marginTop: -8, marginBottom: 10 },
+  receiptScallopBottom: { marginTop: 10, marginBottom: -8 },
+  receiptScallopDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: color.background },
+  receiptShop: { textAlign: 'center', fontFamily: font.mono, fontWeight: '700', fontSize: 16, letterSpacing: 0.5, color: '#1a1a1a' },
+  receiptMeta: { textAlign: 'center', fontFamily: font.mono, fontSize: 11, color: '#555', marginTop: 2 },
+  receiptDivider: { borderTopWidth: 1, borderStyle: 'dashed', borderTopColor: '#999', marginVertical: 10 },
+  receiptTitle: { textAlign: 'center', fontFamily: font.mono, fontSize: 12, letterSpacing: 1, color: '#333' },
+  receiptLineRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2 },
+  receiptLineHead: { fontFamily: font.mono, fontSize: 11, fontWeight: '700', color: '#333' },
+  receiptLineText: { fontFamily: font.mono, fontSize: 12, color: '#222' },
+  receiptTotalLabel: { fontFamily: font.mono, fontSize: 16, fontWeight: '800', color: '#111' },
+  receiptMetaRow: { fontFamily: font.mono, fontSize: 11, color: '#444' },
+  receiptThanks: { textAlign: 'center', fontFamily: font.mono, fontSize: 12, fontWeight: '700', letterSpacing: 0.5, color: '#111', marginTop: 4 },
+  receiptBarcode: { flexDirection: 'row', height: 36, marginTop: 14, justifyContent: 'center', alignItems: 'stretch' },
+  receiptFootnote: { textAlign: 'center', fontFamily: font.mono, fontSize: 10, color: '#999', marginTop: 10 },
   emptyRoot: {
     flex: 1,
     backgroundColor: color.background,

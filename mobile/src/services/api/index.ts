@@ -73,6 +73,10 @@ export type purchaseRecord = {
   retailer: string;
   date: string;
   price: number;
+  address?: string;
+  phone?: string;
+  card?: string;
+  approvalCode?: string;
 };
 
 export type carePass = {
@@ -163,7 +167,18 @@ const carePasses: Record<string, carePass> = {
     ],
     repairs: [{ id: 'h2', kind: 'repair', label: 'Cord replaced', date: '2023-06-18', note: 'Frayed cord swapped by FixIt Helsinki' }],
     nextLifeStatus: 'Still in active use',
-    purchaseHistory: [{ id: 'pu1', retailer: 'Stockmann', date: '2022-03-10', price: 149 }],
+    purchaseHistory: [
+      {
+        id: 'pu1',
+        retailer: 'Stockmann',
+        date: '2022-03-10',
+        price: 149,
+        address: 'Aleksanterinkatu 52, Helsinki',
+        phone: 'Tel. 09 1211',
+        card: '--- --- --- 4471',
+        approvalCode: '#582013',
+      },
+    ],
   },
 };
 
