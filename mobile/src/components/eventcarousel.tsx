@@ -12,7 +12,8 @@ export function EventCarousel({ events }: { events: event[] }) {
 
   if (events.length === 0) return null;
 
-  function onScrollEnd(e: NativeSyntheticEvent<NativeScrollEvent>) {
+  function onScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    if (!pageWidth) return;
     setIndex(Math.round(e.nativeEvent.contentOffset.x / pageWidth));
   }
 
@@ -22,7 +23,8 @@ export function EventCarousel({ events }: { events: event[] }) {
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={onScrollEnd}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
       >
         {events.map((item) => (
           <View key={item.id} style={[styles.page, { width: pageWidth }]}>
