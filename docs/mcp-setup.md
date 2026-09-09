@@ -1,162 +1,99 @@
-# CareLoop MCP Server Setup Guide
+# CareLoop Deployed MCP Server Setup Guide
 
-This guide details how to install, configure, and connect the **CareLoop Model Context Protocol (MCP)** server across major AI applications including **Claude (Desktop & CLI)**, **Gemini / Antigravity**, **Cursor / Codex / Windsurf**, and custom MCP clients.
-
----
-
-## 📋 Prerequisites
-
-- **Node.js**: `v22.x` or higher
-- **Package Manager**: `npm`
-- **Required API Keys & Environment Variables**:
-  - `SUPABASE_URL`: Your Supabase database endpoint.
-  - `SUPABASE_SERVICE_KEY`: Service role secret for Supabase access.
-  - `SUPABASE_SCHEMA`: (Optional, default `careloop`) Database schema name.
-  - `VOYAGE_API_KEY`: API key from Voyage AI for vector embeddings.
-  - `VOYAGE_MODEL`: (Optional, default `voyage-3.5`) Voyage AI embedding model.
-  - `PORT`: (Optional, default `4001`) Port for local SSE server.
+This guide explains how to connect your **deployed CareLoop MCP Server** (hosted on Vercel / Remote Server via SSE) directly into **Claude Desktop**, **Claude Code CLI**, **Gemini / Antigravity**, **Cursor / Codex / Windsurf**, and other AI tools.
 
 ---
 
-## 🛠️ Step 1: Local Build
+## 🌐 Deployed MCP Server Endpoint
 
-1. **Navigate to MCP directory**:
-   ```bash
-   cd mcp
-   ```
+Your live, deployed MCP server endpoint:
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+```
+https://your-mcp-app.vercel.app/sse
+```
+*(Replace `your-mcp-app.vercel.app` with your actual Vercel deployment URL or domain)*
 
-3. **Configure Environment Variables**:
-   Create a `.env` file inside `mcp/`:
-   ```env
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_SERVICE_KEY=your-supabase-service-key
-   SUPABASE_SCHEMA=careloop
-   VOYAGE_API_KEY=your-voyage-api-key
-   VOYAGE_MODEL=voyage-3.5
-   PORT=4001
-   ```
-
-4. **Build TypeScript code**:
-   ```bash
-   npm run build
-   ```
+- **Protocol**: Server-Sent Events (SSE)
+- **Authentication / Keys**: Pre-configured on Vercel (`SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `VOYAGE_API_KEY`) — zero local API keys required for clients!
 
 ---
 
-## 💻 Step 2: Client Integration Guides
+## 🚀 How to Install Deployed MCP in AI Tools
 
-### 1. 🟠 Claude Desktop (macOS / Windows)
+### 1. 🟠 Claude Desktop
 
-In `stdio` mode, Claude Desktop launches the MCP server as a subprocess.
+Open your Claude Desktop config file:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
-1. Open your Claude Desktop config file:
-   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+#### **Option A: Direct SSE URL**
+```json
+{
+  "mcpServers": {
+    "careloop": {
+      "url": "https://your-mcp-app.vercel.app/sse"
+    }
+  }
+}
+```
 
-2. Add `careloop` to `mcpServers`:
-   ```json
-   {
-     "mcpServers": {
-       "careloop": {
-         "command": "node",
-         "args": [
-           "/absolute/path/to/ai-solution-sprint/mcp/dist/local.js",
-           "--stdio"
-         ],
-         "env": {
-           "SUPABASE_URL": "https://your-project.supabase.co",
-           "SUPABASE_SERVICE_KEY": "your-supabase-service-key",
-           "VOYAGE_API_KEY": "your-voyage-api-key"
-         }
-       }
-     }
-   }
-   ```
-3. Restart Claude Desktop.
+#### **Option B: Stdio-to-SSE Bridge (`mcp-remote`)**
+If your Claude Desktop version requires stdio bridge for SSE:
+```json
+{
+  "mcpServers": {
+    "careloop": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://your-mcp-app.vercel.app/sse"
+      ]
+    }
+  }
+}
+```
+
+*Restart Claude Desktop after updating.*
 
 ---
 
 ### 2. 💻 Claude Code CLI
 
-Add CareLoop directly to your terminal CLI:
+To register your deployed CareLoop MCP server in terminal:
 
 ```bash
-claude mcp add careloop node /absolute/path/to/ai-solution-sprint/mcp/dist/local.js --stdio -e SUPABASE_URL=https://your-project.supabase.co -e SUPABASE_SERVICE_KEY=your-supabase-service-key -e VOYAGE_API_KEY=your-voyage-api-key
+claude mcp add careloop https://your-mcp-app.vercel.app/sse
+```
+
+Or using the `mcp-remote` bridge:
+```bash
+claude mcp add careloop npx -y mcp-remote https://your-mcp-app.vercel.app/sse
 ```
 
 ---
 
 ### 3. ♊ Gemini / Antigravity CLI
 
-For Antigravity CLI and Gemini-powered agents:
+In your Antigravity / Gemini MCP configuration (`.gemini/settings.json` or workspace settings):
 
-1. Add server definition in `mcp_servers` configuration (e.g. in `~/.gemini/antigravity-cli/mcp/careloop/` or workspace `.gemini/settings.json`):
-   ```json
-   {
-     "mcpServers": {
-       "careloop": {
-         "command": "node",
-         "args": ["/absolute/path/to/ai-solution-sprint/mcp/dist/local.js", "--stdio"],
-         "env": {
-           "SUPABASE_URL": "https://your-project.supabase.co",
-           "SUPABASE_SERVICE_KEY": "your-supabase-service-key",
-           "VOYAGE_API_KEY": "your-voyage-api-key"
-         }
-       }
-     }
-   }
-   ```
-2. Alternatively, for HTTP/SSE mode, register the SSE endpoint:
-   `http://localhost:4001/sse` or `https://your-mcp-app.vercel.app/sse`.
-
----
-
-### 4. ⚡ Cursor / Windsurf / Codex / VS Code (Continue & Roo Code)
-
-#### **Cursor IDE**
-1. Open **Cursor Settings** -> **Features** -> **MCP**.
-2. Click **+ Add New MCP Server**.
-3. Set Type to `command` (stdio) or `sse`:
-   - **Command**: `node /absolute/path/to/ai-solution-sprint/mcp/dist/local.js --stdio`
-   - **SSE URL**: `http://localhost:4001/sse`
-
-#### **Continue.dev (VS Code & JetBrains)**
-Add to `~/.continue/config.json`:
-```json
-{
-  "mcpServers": [
-    {
-      "name": "careloop",
-      "command": "node",
-      "args": ["/absolute/path/to/ai-solution-sprint/mcp/dist/local.js", "--stdio"],
-      "env": {
-        "SUPABASE_URL": "https://your-project.supabase.co",
-        "SUPABASE_SERVICE_KEY": "your-supabase-service-key",
-        "VOYAGE_API_KEY": "your-voyage-api-key"
-      }
-    }
-  ]
-}
-```
-
-#### **Roo Code (VS Code Extension)**
-Add to `.vscode/mcp.json` or global Roo settings:
 ```json
 {
   "mcpServers": {
     "careloop": {
-      "command": "node",
-      "args": ["/absolute/path/to/ai-solution-sprint/mcp/dist/local.js", "--stdio"],
-      "env": {
-        "SUPABASE_URL": "https://your-project.supabase.co",
-        "SUPABASE_SERVICE_KEY": "your-supabase-service-key",
-        "VOYAGE_API_KEY": "your-voyage-api-key"
-      }
+      "url": "https://your-mcp-app.vercel.app/sse"
+    }
+  }
+}
+```
+
+Or via bridge:
+```json
+{
+  "mcpServers": {
+    "careloop": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://your-mcp-app.vercel.app/sse"]
     }
   }
 }
@@ -164,36 +101,88 @@ Add to `.vscode/mcp.json` or global Roo settings:
 
 ---
 
-## 🌐 Step 3: Running Local SSE Server or Vercel Deployment
+### 4. ⚡ Cursor IDE
 
-### Local SSE Server
-```bash
-cd mcp
-npm run dev
-# Endpoint: http://localhost:4001/sse
+1. Open **Cursor Settings** -> **Features** -> **MCP**.
+2. Click **+ Add New MCP Server**.
+3. Fill in the fields:
+   - **Name**: `careloop`
+   - **Type**: `SSE`
+   - **URL**: `https://your-mcp-app.vercel.app/sse`
+4. Click **Save**.
+
+---
+
+### 5. 🌊 Windsurf / Codex / VS Code (Continue.dev & Roo Code)
+
+#### **Continue.dev (`~/.continue/config.json`)**
+```json
+{
+  "mcpServers": [
+    {
+      "name": "careloop",
+      "url": "https://your-mcp-app.vercel.app/sse"
+    }
+  ]
+}
 ```
 
-### Remote Vercel Serverless Deployment
-```bash
-cd mcp
-npx vercel --prod
-# Endpoint: https://your-mcp-app.vercel.app/sse
+#### **Roo Code (`.vscode/mcp.json`)**
+```json
+{
+  "mcpServers": {
+    "careloop": {
+      "url": "https://your-mcp-app.vercel.app/sse"
+    }
+  }
+}
 ```
 
 ---
 
-## 🧰 Available CareLoop MCP Tools
+### 6. 🤖 Custom Node.js / OpenAI / Codex Client Integration
 
-| Tool | Description | Example Arguments |
+Connect programmatically using `@modelcontextprotocol/sdk`:
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+
+const transport = new SSEClientTransport(
+  new URL('https://your-mcp-app.vercel.app/sse')
+);
+
+const client = new Client({ name: 'careloop-client', version: '1.0.0' }, { capabilities: {} });
+await client.connect(transport);
+
+// List available deployed tools
+const tools = await client.listTools();
+console.log('Available CareLoop tools:', tools);
+```
+
+---
+
+## 🧰 Deployed CareLoop MCP Tools
+
+Once installed, your AI tool will instantly get access to all 4 CareLoop capabilities:
+
+| Tool Name | Description | Example Input |
 |---|---|---|
-| `searchProducts` | Vector similarity search for catalog items via Voyage AI. | `{"query": "backpack"}` |
-| `addCareLog` | Log routine care (`clean`, `store`, `rotate`, `service`). | `{"productId": "123", "type": "clean"}` |
-| `addRepairRequest` | File a repair ticket for broken or damaged items. | `{"productId": "123", "issue": "zipper broken"}` |
-| `addNextLifeRoute` | Route item to next life (`reuse`, `resell`, `donate`, `refurbish`, `recycle`). | `{"productId": "123", "route": "resell"}` |
+| `searchProducts` | Semantic vector search on product catalog using Voyage AI. | `{"query": "hiking backpack"}` |
+| `addCareLog` | Log maintenance (`clean`, `store`, `rotate`, `service`). | `{"productId": "prod_1", "type": "clean"}` |
+| `addRepairRequest` | File repair ticket for damaged items. | `{"productId": "prod_1", "issue": "zipper broken"}` |
+| `addNextLifeRoute` | Route item to next life (`reuse`, `resell`, `donate`, `refurbish`, `recycle`). | `{"productId": "prod_1", "route": "resell"}` |
 
 ---
 
-## 🧪 Testing & Verification
+## 🛠️ Local Development (Alternative)
 
-- **Stdio test**: Run `npm run start:stdio` in terminal to verify JSON-RPC initialization.
-- **Claude / Gemini / Codex test query**: Ask your assistant: *"Search for products related to hiking and log a cleaning action."*
+If you need to test local changes instead of using the deployed version:
+
+```bash
+cd mcp
+npm install
+npm run build
+# Stdio mode for local testing:
+node dist/local.js --stdio
+```
