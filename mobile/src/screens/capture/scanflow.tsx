@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { color, borderWidth, type as t, space } from '../../theme/tokens';
+import { color, type as t, space } from '../../theme/tokens';
 import { SheetHeader } from '../../components/sheetheader';
 import { SegmentTabs } from '../../components/segmenttabs';
 import { TextField } from '../../components/textfield';
 import { Select } from '../../components/select';
 import { PillButton } from '../../components/pillbutton';
+import { CaptureIdentify } from './captureidentify';
 import { api, type product } from '../../services/api';
 
 const categoryOptions = ['Electronics', 'Appliances', 'Furniture', 'Clothing', 'Outdoor', 'Home', 'Others'].map((c) => ({
@@ -121,23 +122,8 @@ export function ScanFlow({ onClose, onDone }: { onClose: () => void; onDone: () 
         ]}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        {tab === 'camera' ? (
-          <View style={styles.viewfinderWrap}>
-            <View style={styles.viewfinder}>
-              <Pressable style={styles.galleryButton} onPress={() => recognize('demo')} disabled={busy}>
-                <Ionicons name="image" size={20} color={color.foreground} />
-              </Pressable>
-              <Text style={styles.viewfinderHint}>Point your camera at a barcode</Text>
-            </View>
-            <PillButton label={busy ? 'Scanning…' : 'Scan'} icon="scan" onPress={() => recognize('demo')} disabled={busy} />
-          </View>
-        ) : null}
-
-        {tab === 'manual' ? (
-          <View style={styles.form}>
-            <TextField placeholder="Barcode or product code" value={code} onChangeText={setCode} autoCapitalize="none" />
-            <PillButton label="Look it up" onPress={() => recognize(code)} disabled={busy || !code} />
-          </View>
+        {tab === 'camera' || tab === 'manual' ? (
+          <CaptureIdentify tab={tab} code={code} onCodeChange={setCode} busy={busy} onCapture={recognize} />
         ) : null}
 
         {tab === 'manualProduct' ? (
@@ -169,31 +155,6 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
   content: { padding: space.lg, gap: space.md },
   form: { gap: space.md },
-  viewfinderWrap: { alignItems: 'center', gap: space.lg },
-  viewfinder: {
-    width: '100%',
-    maxWidth: 360,
-    height: 360,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space.sm,
-  },
-  galleryButton: {
-    position: 'absolute',
-    top: space.md,
-    right: space.md,
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: color.card,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-  },
-  viewfinderHint: { ...t.bodySmall, color: color.mutedForeground },
   notInCatalog: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   notInCatalogLabel: { ...t.eyebrow, color: color.foreground },
   helper: { ...t.bodySmall, color: color.mutedForeground },

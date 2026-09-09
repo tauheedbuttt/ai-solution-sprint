@@ -53,6 +53,40 @@ export type benefit = {
   threshold: { count: number; period: period };
 };
 
+export type confidence = 'verified' | 'estimated' | 'unverified';
+
+export type carePassEvent = {
+  id: string;
+  kind: 'care' | 'repair';
+  label: string;
+  date: string;
+  note?: string;
+};
+
+export type purchaseRecord = {
+  id: string;
+  retailer: string;
+  date: string;
+  price: number;
+};
+
+export type carePass = {
+  productId: string;
+  brand?: string;
+  name: string;
+  category: string;
+  status: status;
+  trustScore: number;
+  confidence: confidence;
+  repairability: number;
+  expectedLifespanYears: number;
+  inUseSince: string;
+  history: carePassEvent[];
+  repairs: carePassEvent[];
+  nextLifeStatus: string;
+  purchaseHistory: purchaseRecord[];
+};
+
 export type summary = {
   careScore: number;
   careScoreNote: string;
@@ -77,6 +111,29 @@ const catalogProduct: product = {
   brand: 'Iittala',
   category: 'Home',
   status: 'active',
+};
+
+const carePasses: Record<string, carePass> = {
+  cat1: {
+    productId: 'cat1',
+    brand: 'Iittala',
+    name: 'Aalto Table Lamp',
+    category: 'Home',
+    status: 'active',
+    trustScore: 82,
+    confidence: 'estimated',
+    repairability: 74,
+    expectedLifespanYears: 12,
+    inUseSince: '2022-03-14',
+    history: [
+      { id: 'h1', kind: 'care', label: 'Cleaned', date: '2024-11-02' },
+      { id: 'h2', kind: 'repair', label: 'Cord replaced', date: '2023-06-18', note: 'Frayed cord swapped by FixIt Helsinki' },
+      { id: 'h3', kind: 'care', label: 'Stored for winter', date: '2022-09-30' },
+    ],
+    repairs: [{ id: 'h2', kind: 'repair', label: 'Cord replaced', date: '2023-06-18', note: 'Frayed cord swapped by FixIt Helsinki' }],
+    nextLifeStatus: 'Still in active use',
+    purchaseHistory: [{ id: 'pu1', retailer: 'Stockmann', date: '2022-03-10', price: 149 }],
+  },
 };
 
 const partners: partner[] = [
@@ -312,6 +369,14 @@ export const api = {
     async recognize(code: string): Promise<product | null> {
       await delay(600);
       return code === 'unknown' ? null : catalogProduct;
+    },
+  },
+  carePass: {
+    async resolve(code: string): Promise<carePass | null> {
+      const product = await api.products.recognize(code);
+      if (!product) return null;
+      await delay(300);
+      return carePasses[product.id] ?? null;
     },
   },
   partners: {
