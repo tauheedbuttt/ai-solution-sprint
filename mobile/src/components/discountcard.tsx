@@ -48,6 +48,7 @@ export function DiscountCard({ discount, progressCount, onPress }: props) {
 
 const styles = StyleSheet.create({
   card: {
+    flex: 1,
     borderWidth: borderWidth.hairline,
     borderColor: color.border,
     backgroundColor: color.card,
