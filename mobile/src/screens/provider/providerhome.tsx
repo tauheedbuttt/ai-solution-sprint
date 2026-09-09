@@ -68,8 +68,8 @@ export function ProviderHome() {
     <SafeAreaView style={styles.root} edges={['top']}>
       <View style={styles.logoRow}>
         <Logo width={140} />
+        <AppBar />
       </View>
-      <AppBar />
 
       {view === 'notFound' ? (
         <View style={styles.emptyRoot}>
@@ -143,7 +143,14 @@ export function ProviderHome() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  logoRow: { paddingHorizontal: space.lg, paddingTop: space.md, paddingBottom: space.xs },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: space.lg,
+    paddingTop: space.md,
+    paddingBottom: space.xs,
+  },
   header: { padding: space.lg, paddingBottom: space.sm, gap: space.xs },
   eyebrow: { ...t.eyebrow, color: color.mint },
   title: { ...t.h2, color: color.foreground },

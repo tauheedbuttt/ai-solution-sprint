@@ -7,18 +7,16 @@ import { SheetHeader } from './sheetheader';
 import { PillButton } from './pillbutton';
 import { useAuth } from '../services/auth/context';
 
-// Shared settings entry point, mounted once per shopper tab shell and once on the provider screen.
+// Shared settings entry point: a bare icon button, meant to sit inline in a screen's own top bar.
 export function AppBar() {
   const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <View style={styles.row}>
-        <Pressable onPress={() => setOpen(true)} hitSlop={8}>
-          <Ionicons name="settings-outline" size={22} color={color.foreground} />
-        </Pressable>
-      </View>
+      <Pressable onPress={() => setOpen(true)} hitSlop={12} style={styles.button}>
+        <Ionicons name="settings-outline" size={20} color={color.foreground} />
+      </Pressable>
       <Sheet visible={open} onClose={() => setOpen(false)}>
         <SheetHeader title="Settings" onClose={() => setOpen(false)} />
         <View style={styles.body}>
@@ -32,13 +30,14 @@ export function AppBar() {
 }
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: space.lg,
-    paddingVertical: space.sm,
-    borderBottomWidth: borderWidth.hairline,
-    borderBottomColor: color.border,
+  button: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: borderWidth.hairline,
+    borderColor: color.border,
+    backgroundColor: color.card,
   },
   body: { padding: space.lg, gap: space.sm },
   label: { ...t.eyebrow, color: color.mutedForeground },
