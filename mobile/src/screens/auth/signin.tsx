@@ -10,8 +10,8 @@ import type { role } from '../../services/api';
 export function SignInScreen() {
   const { signIn } = useAuth();
   const [role, setRole] = useState<role>('shopper');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@careloop.app');
+  const [password, setPassword] = useState('demopass');
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
 
