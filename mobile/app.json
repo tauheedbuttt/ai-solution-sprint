@@ -3,14 +3,18 @@
     "name": "CareLoop",
     "slug": "careloop",
     "version": "1.0.0",
+    "description": "Circular product care, repair requests, and next-life routing platform powered by AI.",
+    "scheme": "careloop",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#02041a",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.careloop.app"
     },
     "android": {
+      "package": "com.careloop.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -20,7 +24,12 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "CareLoop — Circular Product Lifecycle Platform",
+      "shortName": "CareLoop",
+      "description": "Track product care, file repair requests, and route items to next-life stages with AI support.",
+      "themeColor": "#02041a",
+      "backgroundColor": "#02041a"
     }
   }
 }

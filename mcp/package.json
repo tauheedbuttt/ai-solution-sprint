@@ -1,6 +1,7 @@
 {
   "name": "careloop-mcp",
   "version": "1.0.0",
+  "description": "CareLoop Model Context Protocol (MCP) server for Claude Desktop, Claude Code, and remote MCP clients.",
   "private": true,
   "type": "module",
   "main": "dist/local.js",

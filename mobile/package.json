@@ -1,6 +1,7 @@
 {
   "name": "mobile",
   "version": "1.0.0",
+  "description": "CareLoop mobile web client built with Expo and React Native",
   "main": "index.ts",
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
