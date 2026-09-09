@@ -50,6 +50,7 @@ export function DiscountsScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.chipsScroll}
         contentContainerStyle={styles.chips}
       >
         {actorTabs.map((opt) => (
@@ -79,6 +80,7 @@ export function DiscountsScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  chips: { paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.sm },
+  chipsScroll: { flexGrow: 0 },
+  chips: { paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.sm, alignItems: 'center' },
   list: { padding: space.lg, gap: space.md },
 });
