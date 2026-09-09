@@ -1,6 +1,6 @@
 import { createVoyage } from '@ai-sdk/voyage';
 import { embed } from 'ai';
-import { env } from '../config/env';
+import { env } from '../config/env.js';
 
 const voyage = createVoyage({ apiKey: env.voyageApiKey, baseURL: env.voyageBaseUrl });
 

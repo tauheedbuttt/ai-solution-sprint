@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { chat } from '../controllers/agent.controller';
+import { chat } from '../controllers/agent.controller.js';
 
 export const agentRouter = Router();
 

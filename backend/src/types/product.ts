@@ -1,4 +1,4 @@
-import { careLogRow, nextLifeRouteRow, repairRequestRow } from './log';
+import { careLogRow, nextLifeRouteRow, repairRequestRow } from './log.js';
 
 export type status = 'active' | 'draft' | 'routed';
 

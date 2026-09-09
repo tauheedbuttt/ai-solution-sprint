@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getById, getRecentLogs, list } from '../controllers/products.controller';
+import { getById, getRecentLogs, list } from '../controllers/products.controller.js';
 import {
   addCareLog,
   addNextLifeRoute,
@@ -7,7 +7,7 @@ import {
   getCareLogs,
   getNextLifeRoutes,
   getRepairRequests,
-} from '../controllers/logs.controller';
+} from '../controllers/logs.controller.js';
 
 export const productsRouter = Router();
 

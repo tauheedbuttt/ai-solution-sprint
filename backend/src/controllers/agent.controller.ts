@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { runAgentStream } from '../services/agent.service';
+import { runAgentStream } from '../services/agent.service.js';
 
 export async function chat(req: Request, res: Response) {
   const { messages, sessionId } = req.body;

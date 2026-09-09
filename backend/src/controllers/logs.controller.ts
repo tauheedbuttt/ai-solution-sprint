@@ -6,7 +6,7 @@ import {
   listCareLogs,
   listNextLifeRoutes,
   listRepairRequests,
-} from '../services/logs.service';
+} from '../services/logs.service.js';
 
 export async function addCareLog(req: Request, res: Response) {
   try {

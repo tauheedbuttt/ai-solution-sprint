@@ -1,8 +1,8 @@
-import './instrumentation';
+import './instrumentation.js';
 import cors from 'cors';
 import express from 'express';
-import { agentRouter } from './routes/agent.routes';
-import { productsRouter } from './routes/products.routes';
+import { agentRouter } from './routes/agent.routes.js';
+import { productsRouter } from './routes/products.routes.js';
 
 export const app = express();
 

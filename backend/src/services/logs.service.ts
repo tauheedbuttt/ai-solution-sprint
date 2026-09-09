@@ -1,4 +1,4 @@
-import { supabase } from '../config/supabaseClient';
+import { supabase } from '../config/supabaseClient.js';
 import {
   careLogRow,
   nextLifeRouteRow,
@@ -6,7 +6,7 @@ import {
   toCareLog,
   toNextLifeRoute,
   toRepairRequest,
-} from '../types/log';
+} from '../types/log.js';
 
 export async function createCareLog(productId: string, input: { type: string; note?: string; share: boolean }) {
   const { data, error } = await supabase

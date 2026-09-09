@@ -2,10 +2,10 @@ import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { streamText, isStepCount, ModelMessage, tool } from 'ai';
 import { propagateAttributes, startActiveObservation } from '@langfuse/tracing';
 import { z } from 'zod';
-import { env } from '../config/env';
-import { langfuseSpanProcessor } from '../instrumentation';
-import { createCareLog, createNextLifeRoute, createRepairRequest } from './logs.service';
-import { searchProductsForAgent } from './products.service';
+import { env } from '../config/env.js';
+import { langfuseSpanProcessor } from '../instrumentation.js';
+import { createCareLog, createNextLifeRoute, createRepairRequest } from './logs.service.js';
+import { searchProductsForAgent } from './products.service.js';
 
 const bedrock = createAmazonBedrock({
   region: env.awsRegion,

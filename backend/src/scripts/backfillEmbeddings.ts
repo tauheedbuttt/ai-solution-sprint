@@ -1,5 +1,5 @@
-import { supabase } from '../config/supabaseClient';
-import { embedText } from '../services/embedding.service';
+import { supabase } from '../config/supabaseClient.js';
+import { embedText } from '../services/embedding.service.js';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const requestGapMs = 21000; // 3 RPM cap on the free Voyage tier

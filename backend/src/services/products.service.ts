@@ -1,6 +1,6 @@
-import { supabase } from '../config/supabaseClient';
-import { productRow, toDetail, toListItem, toRecentLogItems } from '../types/product';
-import { embedText } from './embedding.service';
+import { supabase } from '../config/supabaseClient.js';
+import { productRow, toDetail, toListItem, toRecentLogItems } from '../types/product.js';
+import { embedText } from './embedding.service.js';
 
 const listColumns = 'id, name, brand, category, status, care_score';
 const detailColumns = 'id, name, brand, category, status, care_score, scores, care_logs(*), repair_requests(*), next_life_routes(*)';
