@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { LangfuseSpanProcessor } from '@langfuse/otel';
-import { LangfuseVercelAiSdkIntegration } from '@langfuse/vercel-ai-sdk';
 import { registerTelemetry } from 'ai';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { Context } from '@opentelemetry/api';
@@ -33,4 +32,14 @@ export const langfuseSpanProcessor = langfuse;
 const sdk = new NodeSDK({ spanProcessors: [new StripModelFromNameProcessor()] });
 sdk.start();
 
-registerTelemetry(new LangfuseVercelAiSdkIntegration());
+// Native dynamic import to load ESM package in CommonJS runtime on Vercel
+(async () => {
+  try {
+    const { LangfuseVercelAiSdkIntegration } = await (eval(
+      'import("@langfuse/vercel-ai-sdk")'
+    ) as Promise<typeof import('@langfuse/vercel-ai-sdk')>);
+    registerTelemetry(new LangfuseVercelAiSdkIntegration());
+  } catch (err) {
+    console.error('Failed to initialize Langfuse telemetry:', err);
+  }
+})();
