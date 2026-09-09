@@ -8,7 +8,8 @@ export type agentEvent =
   | { type: 'done'; messages: agentMessage[] }
   | { type: 'error'; message: string };
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000';
+const rawUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000';
+const apiUrl = rawUrl.replace(/\/+$/, '');
 
 export async function streamAgentChat(
   messages: agentMessage[],
