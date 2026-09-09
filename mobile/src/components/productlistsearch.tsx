@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
 import { color, borderWidth, radius, type as t, space } from '../theme/tokens';
 import { SheetHeader } from './sheetheader';
 import { TextField } from './textfield';
+import { ProductRowSkeleton } from './productrowskeleton';
+import { useDebounce } from '../hooks/usedebounce';
 import { api, type product } from '../services/api';
 
 type props = {
@@ -14,11 +17,12 @@ type props = {
 
 export function ProductListSearch({ title, onClose, onSelect }: props) {
   const [query, setQuery] = useState('');
-  const [products, setProducts] = useState<product[]>([]);
+  const debouncedQuery = useDebounce(query, 300);
 
-  useEffect(() => {
-    api.products.search(query).then(setProducts);
-  }, [query]);
+  const { data: products = [], isLoading } = useQuery({
+    queryKey: ['products', debouncedQuery],
+    queryFn: () => api.products.search(debouncedQuery),
+  });
 
   return (
     <View style={styles.root}>
@@ -27,19 +31,25 @@ export function ProductListSearch({ title, onClose, onSelect }: props) {
         <TextField placeholder="Search your products" value={query} onChangeText={setQuery} autoCapitalize="none" />
       </View>
       <ScrollView>
-        {products.map((p) => (
-          <Pressable key={p.id} style={styles.row} onPress={() => onSelect(p)}>
-            <View style={styles.thumb}>
-              <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
-            </View>
-            <View style={styles.rowBody}>
-              <Text style={styles.rowTitle}>{p.name}</Text>
-              <Text style={styles.rowSubtitle}>{p.category}</Text>
-            </View>
-            <Text style={styles.rowBadge}>{p.status === 'draft' ? 'Draft' : p.careScore ? `Score ${p.careScore}` : ''}</Text>
-          </Pressable>
-        ))}
-        {products.length === 0 ? <Text style={styles.empty}>No products match "{query}"</Text> : null}
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => <ProductRowSkeleton key={i} />)
+        ) : (
+          <>
+            {products.map((p) => (
+              <Pressable key={p.id} style={styles.row} onPress={() => onSelect(p)}>
+                <View style={styles.thumb}>
+                  <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
+                </View>
+                <View style={styles.rowBody}>
+                  <Text style={styles.rowTitle}>{p.name}</Text>
+                  <Text style={styles.rowSubtitle}>{p.category}</Text>
+                </View>
+                <Text style={styles.rowBadge}>{p.status === 'draft' ? 'Draft' : p.careScore ? `Score ${p.careScore}` : ''}</Text>
+              </Pressable>
+            ))}
+            {products.length === 0 ? <Text style={styles.empty}>No products match "{debouncedQuery}"</Text> : null}
+          </>
+        )}
       </ScrollView>
     </View>
   );

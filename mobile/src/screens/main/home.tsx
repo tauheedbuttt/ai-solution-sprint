@@ -1,28 +1,33 @@
 import { useEffect, useState } from "react";
 import { View, Text, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { color, type as t, space } from "../../theme/tokens";
 import { EventCarousel } from "../../components/eventcarousel";
 import { CareScoreCard } from "../../components/carescorecard";
 import { StatRow } from "../../components/statrow";
 import { ProductCard } from "../../components/productcard";
+import { ProductCardSkeleton } from "../../components/productcardskeleton";
 import { ProductListSearch } from "../../components/productlistsearch";
 import { Sheet } from "../../components/sheet";
 import { ProductDetailScreen } from "./productdetail";
-import { api, type event, type summary, type product } from "../../services/api";
+import { api, type event, type summary } from "../../services/api";
 
 export function HomeScreen() {
   const [events, setEvents] = useState<event[]>([]);
   const [summary, setSummary] = useState<summary>();
-  const [products, setProducts] = useState<product[]>([]);
-  const [openProduct, setOpenProduct] = useState<product | null>(null);
+  const [openProductId, setOpenProductId] = useState<string | null>(null);
   const [showAllProducts, setShowAllProducts] = useState(false);
+
+  const { data: products = [], isLoading: productsLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => api.products.list(),
+  });
 
   useEffect(() => {
     function load() {
       api.events.list().then(setEvents);
       api.stats.summary().then(setSummary);
-      api.products.list().then(setProducts);
     }
     load();
     return api.subscribe(load);
@@ -56,15 +61,17 @@ export function HomeScreen() {
             </Pressable>
           </View>
           <View style={styles.grid}>
-            {products.map((p) => (
-              <ProductCard key={p.id} product={p} onPress={() => setOpenProduct(p)} />
-            ))}
+            {productsLoading
+              ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
+              : products.map((p) => (
+                  <ProductCard key={p.id} product={p} onPress={() => setOpenProductId(p.id)} />
+                ))}
           </View>
         </View>
       </ScrollView>
 
-      <Sheet visible={!!openProduct} onClose={() => setOpenProduct(null)}>
-        {openProduct ? <ProductDetailScreen product={openProduct} onClose={() => setOpenProduct(null)} /> : null}
+      <Sheet visible={!!openProductId} onClose={() => setOpenProductId(null)}>
+        {openProductId ? <ProductDetailScreen productId={openProductId} onClose={() => setOpenProductId(null)} /> : null}
       </Sheet>
 
       <Sheet visible={showAllProducts} onClose={() => setShowAllProducts(false)}>
@@ -73,7 +80,7 @@ export function HomeScreen() {
           onClose={() => setShowAllProducts(false)}
           onSelect={(p) => {
             setShowAllProducts(false);
-            setOpenProduct(p);
+            setOpenProductId(p.id);
           }}
         />
       </Sheet>

@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './src/services/auth/context';
 import { RootNavigator } from './src/navigation/root';
 import { color, layout } from './src/theme/tokens';
+
+const queryClient = new QueryClient();
 
 export default function App() {
   useEffect(() => {
@@ -46,12 +49,14 @@ export default function App() {
   return (
     <View style={styles.page}>
       <View style={styles.frame}>
-        <SafeAreaProvider>
-          <AuthProvider>
-            <StatusBar style="light" />
-            <RootNavigator />
-          </AuthProvider>
-        </SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <AuthProvider>
+              <StatusBar style="light" />
+              <RootNavigator />
+            </AuthProvider>
+          </SafeAreaProvider>
+        </QueryClientProvider>
       </View>
     </View>
   );

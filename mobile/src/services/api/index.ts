@@ -1,3 +1,5 @@
+import { fetchProductById, fetchProducts } from './products.remote';
+
 export type role = 'shopper' | 'service_provider';
 
 export type user = {
@@ -403,14 +405,13 @@ export const api = {
   },
   products: {
     async list(): Promise<product[]> {
-      await delay(300);
-      return ownedProducts;
+      return fetchProducts();
     },
     async search(query: string): Promise<product[]> {
-      await delay(200);
-      const q = query.trim().toLowerCase();
-      if (!q) return ownedProducts;
-      return ownedProducts.filter((p) => p.name.toLowerCase().includes(q));
+      return fetchProducts(query);
+    },
+    async get(id: string): Promise<product | null> {
+      return fetchProductById(id);
     },
     async recognize(code: string): Promise<product | null> {
       await delay(600);
