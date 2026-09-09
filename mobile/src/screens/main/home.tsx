@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { color, type as t, space } from '../../theme/tokens';
-import { EventCard } from '../../components/eventcard';
-import { StatCard } from '../../components/statcard';
-import { api, type event, type summary } from '../../services/api';
+import { useEffect, useState } from "react";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
+import { color, type as t, space } from "../../theme/tokens";
+import { EventCarousel } from "../../components/eventcarousel";
+import { StatCard } from "../../components/statcard";
+import { useAuth } from "../../services/auth/context";
+import { api, type event, type summary } from "../../services/api";
 
 export function HomeScreen() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<event[]>([]);
   const [summary, setSummary] = useState<summary>();
 
@@ -18,19 +20,21 @@ export function HomeScreen() {
     return api.subscribe(load);
   }, []);
 
+  const name = user ? displayName(user.email) : "";
+
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      {events.length > 0 ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carousel}>
-          {events.map((e) => (
-            <EventCard key={e.id} title={e.title} subtitle={e.subtitle} />
-          ))}
-        </ScrollView>
-      ) : null}
+      <View style={styles.greeting}>
+        <Text style={styles.eyebrow}>the careloop</Text>
+        <Text style={styles.hi}>Hi, {name}</Text>
+      </View>
+
+      <EventCarousel events={events} />
 
       {summary ? (
         <View style={styles.stats}>
           <StatCard
+            size="hero"
             label="Your Care Score"
             value={String(summary.careScore)}
             suffix="/100"
@@ -38,25 +42,64 @@ export function HomeScreen() {
             description={summary.careScoreNote}
             progress={summary.careScore / 100}
           />
+          <View style={styles.bento}>
+            <View style={styles.bentoBig}>
+              <StatCard
+                size="bento"
+                icon="cube"
+                label="Items"
+                value={String(summary.itemsInLoop)}
+              />
+            </View>
+            <View style={styles.bentoCol}>
+              <StatCard
+                size="compact"
+                icon="checkmark-done"
+                label="Events"
+                value={String(summary.careEventsLogged)}
+              />
+              <StatCard
+                size="compact"
+                icon="time"
+                label="In use"
+                value={String(summary.stillInUse)}
+              />
+            </View>
+          </View>
+
           <StatCard
+            layout="row"
+            icon="trending-up"
+            label="Months of life added"
+            value={String(summary.monthsOfLifeAdded)}
+          />
+
+          <StatCard
+            layout="row"
+            icon="leaf"
             label="Care Contribution"
             value={String(summary.careContribution)}
-            description={summary.careContributionNote}
             footnote={`~€${summary.retainedValue} value retained`}
           />
-          <StatCard label="Care events logged" value={String(summary.careEventsLogged)} />
-          <StatCard label="Still in use" value={String(summary.stillInUse)} />
-          <StatCard label="Months of life added" value={String(summary.monthsOfLifeAdded)} />
-          <StatCard label="Items in your loop" value={String(summary.itemsInLoop)} />
         </View>
       ) : null}
     </ScrollView>
   );
 }
 
+function displayName(email: string) {
+  const handle = email.split("@")[0] || email;
+  return handle.charAt(0).toUpperCase() + handle.slice(1);
+}
+
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
   content: { paddingVertical: space.lg, gap: space.lg },
-  carousel: { paddingHorizontal: space.lg, gap: space.md },
-  stats: { paddingHorizontal: space.lg, gap: space.md },
+  greeting: { paddingHorizontal: space.lg, gap: 2 },
+  eyebrow: { ...t.eyebrow, color: color.mint },
+  hi: { ...t.h2, color: color.foreground },
+  stats: { paddingHorizontal: space.lg, gap: space.sm },
+  bento: { flexDirection: "row", gap: space.sm },
+  bentoBig: { flex: 1.2 },
+  bentoCol: { flex: 1, gap: space.sm },
 });

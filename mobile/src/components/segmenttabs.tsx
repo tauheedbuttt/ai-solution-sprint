@@ -1,5 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { color, borderWidth, type as t, space } from '../theme/tokens';
+import { View, Text, Pressable, StyleSheet } from "react-native";
+import { color, borderWidth, type as t, space } from "../theme/tokens";
 
 type option = { value: string; label: string };
 
@@ -15,9 +15,17 @@ export function SegmentTabs({ value, onChange, options }: props) {
       {options.map((opt) => {
         const active = opt.value === value;
         return (
-          <Pressable key={opt.value} onPress={() => onChange(opt.value)} style={styles.item}>
-            <Text style={[styles.label, active && styles.labelActive]}>{opt.label}</Text>
-            <View style={[styles.underline, active && styles.underlineActive]} />
+          <Pressable
+            key={opt.value}
+            onPress={() => onChange(opt.value)}
+            style={styles.item}
+          >
+            <Text style={[styles.label, active && styles.labelActive]}>
+              {opt.label}
+            </Text>
+            <View
+              style={[styles.underline, active && styles.underlineActive]}
+            />
           </Pressable>
         );
       })}
@@ -26,10 +34,21 @@ export function SegmentTabs({ value, onChange, options }: props) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', borderBottomWidth: borderWidth.hairline, borderBottomColor: color.border },
-  item: { flex: 1, alignItems: 'center', gap: space.xs, paddingVertical: space.sm },
+  row: {
+    flexDirection: "row",
+    paddingHorizontal: space.lg,
+    paddingVertical: space.sm,
+    gap: space.lg,
+    borderBottomWidth: borderWidth.hairline,
+    borderBottomColor: color.border,
+  },
+  item: { alignItems: "center", gap: space.xs, paddingVertical: space.sm },
   label: { ...t.eyebrow, color: color.mutedForeground },
   labelActive: { color: color.foreground },
-  underline: { height: 2, width: '60%', backgroundColor: 'transparent' },
+  underline: {
+    height: 2,
+    alignSelf: "stretch",
+    backgroundColor: "transparent",
+  },
   underlineActive: { backgroundColor: color.brownInk },
 });
