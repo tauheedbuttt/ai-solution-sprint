@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import { color, space } from '../../theme/tokens';
-import { SegmentTabs } from '../../components/segmenttabs';
+import { View, FlatList, ScrollView, StyleSheet } from 'react-native';
+import { color, borderWidth, space } from '../../theme/tokens';
+import { Logo } from '../../components/logo';
+import { Chip } from '../../components/chip';
 import { DiscountCard } from '../../components/discountcard';
 import { DiscountDetail } from '../../components/discountdetail';
 import { api, type actorType, type discount, type period } from '../../services/api';
@@ -47,7 +48,23 @@ export function DiscountsScreen() {
 
   return (
     <View style={styles.root}>
-      <SegmentTabs value={actor} onChange={(v) => setActor(v as actorType)} options={actorTabs} />
+      <View style={styles.appBar}>
+        <Logo width={120} />
+      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chips}
+      >
+        {actorTabs.map((opt) => (
+          <Chip
+            key={opt.value}
+            label={opt.label}
+            active={opt.value === actor}
+            onPress={() => setActor(opt.value)}
+          />
+        ))}
+      </ScrollView>
       <FlatList
         data={visible}
         keyExtractor={(d) => d.id}
@@ -66,5 +83,12 @@ export function DiscountsScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
+  appBar: {
+    paddingHorizontal: space.lg,
+    paddingVertical: space.md,
+    borderBottomWidth: borderWidth.hairline,
+    borderBottomColor: color.border,
+  },
+  chips: { paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.sm },
   list: { padding: space.lg, gap: space.md },
 });
