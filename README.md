@@ -41,6 +41,7 @@ CareLoop is a circular product lifecycle platform that empowers users to track p
 - **Capabilities:**
   - Standalone MCP server exposing the **exact same tools** (`searchProducts`, `addCareLog`, `addRepairRequest`, `addNextLifeRoute`) to AI clients.
   - Supports local `stdio` mode (for Claude Desktop / Claude Code CLI) and HTTP `SSE` mode (for remote MCP clients / Vercel deployment).
+  - See full installation & integration steps in [docs/mcp-setup.md](docs/mcp-setup.md).
 
 ---
 
