@@ -35,9 +35,6 @@ type message = {
 };
 type reaction = "up" | "down";
 
-const minInputHeight = t.body.lineHeight;
-const maxInputHeight = t.body.lineHeight * 5;
-
 const suggestedPrompts = [
   "Log a clean for my Trailhead Backpack",
   "What's my care score right now?",
@@ -234,7 +231,6 @@ export function AiChat({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [inputHeight, setInputHeight] = useState<number>(minInputHeight);
   const [reactions, setReactions] = useState<
     Record<string, reaction | undefined>
   >({});
@@ -248,7 +244,6 @@ export function AiChat({ onClose }: { onClose: () => void }) {
     const text = prompt.trim();
     if (!text || busy) return;
     setInput("");
-    setInputHeight(minInputHeight);
     setBusy(true);
 
     const userMsg: message = { id: mockId(), role: "user", text };
@@ -405,15 +400,7 @@ export function AiChat({ onClose }: { onClose: () => void }) {
           value={input}
           onChangeText={setInput}
           multiline
-          onContentSizeChange={(e) =>
-            setInputHeight(
-              Math.min(maxInputHeight, e.nativeEvent.contentSize.height),
-            )
-          }
-          style={[
-            styles.inputField,
-            { height: Math.max(minInputHeight, inputHeight) },
-          ]}
+          style={styles.inputField}
         />
         <View style={styles.inputFooter}>
           <Text style={styles.groundedLabel}>Grounded in Care Loop data</Text>
@@ -530,6 +517,9 @@ const styles = StyleSheet.create({
   inputField: {
     borderWidth: 0,
     paddingHorizontal: 0,
+    paddingVertical: 0,
+    minHeight: t.body.lineHeight,
+    maxHeight: t.body.lineHeight * 5,
     textAlignVertical: "top",
   },
   inputFooter: {
