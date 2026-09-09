@@ -1,6 +1,6 @@
-import { Pressable, View, StyleSheet } from 'react-native';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { color, space } from '../theme/tokens';
+import { Pressable, View, StyleSheet } from "react-native";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { color, space } from "../theme/tokens";
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   return (
@@ -14,8 +14,14 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             onPress={() => navigation.navigate(route.name)}
             style={styles.item}
           >
-            {tabBarIcon?.({ focused: active, color: active ? color.mint : color.mutedForeground, size: 24 })}
-            <View style={[styles.underline, active && styles.underlineActive]} />
+            {tabBarIcon?.({
+              focused: active,
+              color: active ? color.mint : color.mutedForeground,
+              size: 24,
+            })}
+            <View
+              style={[styles.underline, active && styles.underlineActive]}
+            />
           </Pressable>
         );
       })}
@@ -25,15 +31,19 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
 const styles = StyleSheet.create({
   bar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: color.card,
     borderTopWidth: 1,
     borderTopColor: color.border,
-    paddingHorizontal: 24,
-    paddingTop: 24,
-    paddingBottom: 26,
+    paddingTop: 18,
+    paddingBottom: 15,
   },
-  item: { flex: 1, alignItems: 'center', gap: space.xs },
-  underline: { height: 2, width: 20, borderRadius: 0, backgroundColor: 'transparent' },
+  item: { flex: 1, alignItems: "center", gap: space.xs },
+  underline: {
+    height: 2,
+    width: 20,
+    borderRadius: 0,
+    backgroundColor: "transparent",
+  },
   underlineActive: { backgroundColor: color.brownInk },
 });
