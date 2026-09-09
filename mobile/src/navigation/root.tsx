@@ -1,6 +1,6 @@
 import { NavigationContainer, DarkTheme, type Theme } from '@react-navigation/native';
 import { SignInScreen } from '../screens/auth/signin';
-import { Tabs } from './tabs';
+import { Shell } from './shell';
 import { useAuth } from '../services/auth/context';
 import { color } from '../theme/tokens';
 
@@ -13,7 +13,7 @@ export function RootNavigator() {
   const { user } = useAuth();
   return (
     <NavigationContainer theme={navTheme}>
-      {user ? <Tabs /> : <SignInScreen />}
+      {user ? <Shell /> : <SignInScreen />}
     </NavigationContainer>
   );
 }

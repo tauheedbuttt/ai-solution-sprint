@@ -2,14 +2,14 @@ import { TextInput, Text, View, StyleSheet, type TextInputProps } from 'react-na
 import { color, radius, borderWidth, type as t, space } from '../theme/tokens';
 
 type props = TextInputProps & {
-  label: string;
+  label?: string;
   error?: string;
 };
 
 export function TextField({ label, error, style, ...input }: props) {
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>{label}</Text>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       <TextInput
         placeholderTextColor={color.mutedForeground}
         style={[styles.input, error && styles.inputError, style]}
