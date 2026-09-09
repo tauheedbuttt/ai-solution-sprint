@@ -2,96 +2,64 @@ import { useEffect, useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { color, type as t, space } from "../../theme/tokens";
 import { EventCarousel } from "../../components/eventcarousel";
-import { StatCard } from "../../components/statcard";
-import { useAuth } from "../../services/auth/context";
-import { api, type event, type summary } from "../../services/api";
+import { CareScoreCard } from "../../components/carescorecard";
+import { StatRow } from "../../components/statrow";
+import { ProductCard } from "../../components/productcard";
+import { api, type event, type summary, type product } from "../../services/api";
 
 export function HomeScreen() {
-  const { user } = useAuth();
   const [events, setEvents] = useState<event[]>([]);
   const [summary, setSummary] = useState<summary>();
+  const [products, setProducts] = useState<product[]>([]);
 
   useEffect(() => {
     function load() {
       api.events.list().then(setEvents);
       api.stats.summary().then(setSummary);
+      api.products.list().then(setProducts);
     }
     load();
     return api.subscribe(load);
   }, []);
 
-  const name = user ? displayName(user.email) : "";
-
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      <EventCarousel events={events} />
-
       {summary ? (
         <View style={styles.stats}>
-          <StatCard
-            size="hero"
-            label="Your Care Score"
-            value={String(summary.careScore)}
-            suffix="/100"
-            valueColor={color.brownInk}
-            description={summary.careScoreNote}
-            progress={summary.careScore / 100}
-          />
-          <View style={styles.bento}>
-            <View style={styles.bentoBig}>
-              <StatCard
-                size="bento"
-                icon="cube"
-                label="Items"
-                value={String(summary.itemsInLoop)}
-              />
-            </View>
-            <View style={styles.bentoCol}>
-              <StatCard
-                size="compact"
-                icon="checkmark-done"
-                label="Events"
-                value={String(summary.careEventsLogged)}
-              />
-              <StatCard
-                size="compact"
-                icon="time"
-                label="In use"
-                value={String(summary.stillInUse)}
-              />
-            </View>
-          </View>
-
-          <StatCard
-            layout="row"
-            icon="trending-up"
-            label="Months of life added"
-            value={String(summary.monthsOfLifeAdded)}
-          />
-
-          <StatCard
-            layout="row"
-            icon="leaf"
-            label="Care Contribution"
-            value={String(summary.careContribution)}
-            footnote={`~€${summary.retainedValue} value retained`}
+          <CareScoreCard score={summary.careScore} note={summary.careScoreNote} />
+          <StatRow
+            stats={[
+              { label: "Items", value: String(summary.itemsInLoop) },
+              { label: "Events", value: String(summary.careEventsLogged) },
+              { label: "In use", value: String(summary.stillInUse) },
+              { label: "Months", value: `+${summary.monthsOfLifeAdded}`, valueColor: color.mint },
+            ]}
           />
         </View>
       ) : null}
+
+      <EventCarousel events={events} />
+
+      <View style={styles.products}>
+        <View style={styles.productsHeader}>
+          <Text style={styles.productsTitle}>Products</Text>
+        </View>
+        <View style={styles.grid}>
+          {products.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </View>
+      </View>
     </ScrollView>
   );
-}
-
-function displayName(email: string) {
-  const handle = email.split("@")[0] || email;
-  return handle.charAt(0).toUpperCase() + handle.slice(1);
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
   content: { paddingVertical: space.md, gap: space.lg },
   stats: { paddingHorizontal: space.lg, gap: space.sm },
-  bento: { flexDirection: "row", gap: space.sm },
-  bentoBig: { flex: 1.2 },
-  bentoCol: { flex: 1, gap: space.sm },
+  products: { paddingHorizontal: space.lg, gap: space.md },
+  productsHeader: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" },
+  productsTitle: { ...t.h3, color: color.foreground },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: space.md },
 });
