@@ -24,11 +24,6 @@ export function HomeScreen() {
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      <View style={styles.greeting}>
-        <Text style={styles.eyebrow}>the careloop</Text>
-        <Text style={styles.hi}>Hi, {name}</Text>
-      </View>
-
       <EventCarousel events={events} />
 
       {summary ? (
@@ -94,10 +89,7 @@ function displayName(email: string) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  content: { paddingVertical: space.lg, gap: space.lg },
-  greeting: { paddingHorizontal: space.lg, gap: 2 },
-  eyebrow: { ...t.eyebrow, color: color.mint },
-  hi: { ...t.h2, color: color.foreground },
+  content: { paddingVertical: space.md, gap: space.lg },
   stats: { paddingHorizontal: space.lg, gap: space.sm },
   bento: { flexDirection: "row", gap: space.sm },
   bentoBig: { flex: 1.2 },

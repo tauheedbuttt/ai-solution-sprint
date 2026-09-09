@@ -4,6 +4,7 @@ import { color, space, type as t } from '../../theme/tokens';
 import { PillButton } from '../../components/pillbutton';
 import { TextField } from '../../components/textfield';
 import { RoleSwitch } from '../../components/roleswitch';
+import { Logo } from '../../components/logo';
 import { useAuth } from '../../services/auth/context';
 import type { role } from '../../services/api';
 
@@ -33,7 +34,7 @@ export function SignInScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.content}>
-        <Text style={styles.eyebrow}>the careloop</Text>
+        <Logo width={160} style={styles.logo} />
         <Text style={styles.title}>Sign in</Text>
 
         <RoleSwitch value={role} onChange={setRole} />
@@ -66,7 +67,7 @@ export function SignInScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
   content: { flex: 1, justifyContent: 'center', padding: space.lg, gap: space.lg },
-  eyebrow: { ...t.eyebrow, color: color.mint },
+  logo: { marginBottom: space.xs },
   title: { ...t.h1, color: color.foreground },
   form: { gap: space.md },
   formError: { ...t.bodySmall, color: color.destructive },

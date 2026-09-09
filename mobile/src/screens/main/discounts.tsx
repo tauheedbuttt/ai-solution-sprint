@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { View, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { color, borderWidth, space } from '../../theme/tokens';
-import { Logo } from '../../components/logo';
 import { Chip } from '../../components/chip';
 import { DiscountCard } from '../../components/discountcard';
 import { DiscountDetail } from '../../components/discountdetail';
@@ -48,9 +47,6 @@ export function DiscountsScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={styles.appBar}>
-        <Logo width={120} />
-      </View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -83,12 +79,6 @@ export function DiscountsScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  appBar: {
-    paddingHorizontal: space.lg,
-    paddingVertical: space.md,
-    borderBottomWidth: borderWidth.hairline,
-    borderBottomColor: color.border,
-  },
   chips: { paddingHorizontal: space.lg, paddingVertical: space.md, gap: space.sm },
   list: { padding: space.lg, gap: space.md },
 });
