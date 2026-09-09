@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { TabBar } from './tabbar';
+import { AppBar } from '../components/appbar';
 import { HomeScreen } from '../screens/main/home';
 import { DiscountsScreen } from '../screens/main/discounts';
 import { EpassiScreen } from '../screens/main/epassi';
@@ -17,7 +18,7 @@ function makeIcon(name: keyof typeof Ionicons.glyphMap) {
 export function Tabs() {
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: true, header: () => <AppBar /> }}
       tabBar={(props) => <TabBar {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ tabBarIcon: makeIcon('home') }} />

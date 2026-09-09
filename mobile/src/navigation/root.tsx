@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavigationContainer, DarkTheme, type Theme } from '@react-navigation/native';
 import { SignInScreen } from '../screens/auth/signin';
 import { Shell } from './shell';
+import { ProviderHome } from '../screens/provider/providerhome';
 import { useAuth } from '../services/auth/context';
 import { color } from '../theme/tokens';
 
@@ -20,7 +21,15 @@ export function RootNavigator() {
       onStateChange={(state) => setActiveRoute(state?.routes[state.index]?.name)}
       onReady={() => setActiveRoute('Home')}
     >
-      {user ? <Shell activeRoute={activeRoute} /> : <SignInScreen />}
+      {user ? (
+        user.role === 'service_provider' ? (
+          <ProviderHome />
+        ) : (
+          <Shell activeRoute={activeRoute} />
+        )
+      ) : (
+        <SignInScreen />
+      )}
     </NavigationContainer>
   );
 }

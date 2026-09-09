@@ -441,6 +441,24 @@ export const api = {
       return discounts.find((d) => d.id === id) ?? null;
     },
   },
+  repairLog: {
+    async add(productId: string, input: { summary: string; note?: string }): Promise<void> {
+      await delay(400);
+      const pass = carePasses[productId];
+      if (pass) {
+        const entry: carePassEvent = {
+          id: mockId(`repair${Date.now()}`),
+          kind: 'repair',
+          label: input.summary,
+          date: new Date().toISOString(),
+          note: input.note,
+        };
+        pass.history.unshift(entry);
+        pass.repairs.unshift(entry);
+      }
+      notifyChange();
+    },
+  },
   epassi: {
     async isIdentified(): Promise<boolean> {
       await delay(150);
