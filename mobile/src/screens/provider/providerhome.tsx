@@ -7,6 +7,7 @@ import { SegmentTabs } from '../../components/segmenttabs';
 import { TextField } from '../../components/textfield';
 import { PillButton } from '../../components/pillbutton';
 import { AppBar } from '../../components/appbar';
+import { Logo } from '../../components/logo';
 import { CaptureIdentify } from '../capture/captureidentify';
 import { api, type product } from '../../services/api';
 
@@ -65,6 +66,9 @@ export function ProviderHome() {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
+      <View style={styles.logoRow}>
+        <Logo width={140} />
+      </View>
       <AppBar />
 
       {view === 'notFound' ? (
@@ -139,6 +143,7 @@ export function ProviderHome() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
+  logoRow: { paddingHorizontal: space.lg, paddingTop: space.md, paddingBottom: space.xs },
   header: { padding: space.lg, paddingBottom: space.sm, gap: space.xs },
   eyebrow: { ...t.eyebrow, color: color.mint },
   title: { ...t.h2, color: color.foreground },
