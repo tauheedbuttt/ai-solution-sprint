@@ -1,5 +1,5 @@
 ---
-status: ready-for-agent
+status: done
 tracker: none — local markdown, no issue tracker configured for this repo
 depends-on: 01-scaffolding.md
 ---
