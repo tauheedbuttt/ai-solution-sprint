@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "careloop": {
+      "serverUrl": "https://tcl-mcp.vercel.app/sse"
+    }
+  }
+}
