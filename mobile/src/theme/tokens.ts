@@ -14,6 +14,7 @@ export const color = {
   destructive: '#cd6766',
   input: '#ffffff29',
   ring: '#f08169',
+  codeKey: '#7dd3fc', // JSON syntax highlight: keys and string values
 } as const;
 
 export const radius = {
