@@ -5,7 +5,7 @@ import { color, borderWidth, type as t, space } from '../theme/tokens';
 type props = {
   visible: boolean;
   onClose: () => void;
-  onSelect: (flow: 'scan' | 'log') => void;
+  onSelect: (flow: 'scan' | 'log' | 'ai') => void;
 };
 
 export function CaptureMenu({ visible, onClose, onSelect }: props) {
@@ -21,6 +21,11 @@ export function CaptureMenu({ visible, onClose, onSelect }: props) {
         <Pressable style={styles.option} onPress={() => onSelect('log')}>
           <Ionicons name="create" size={20} color={color.foreground} />
           <Text style={styles.optionLabel}>Log</Text>
+        </Pressable>
+        <View style={styles.divider} />
+        <Pressable style={styles.option} onPress={() => onSelect('ai')}>
+          <Ionicons name="sparkles" size={20} color={color.foreground} />
+          <Text style={styles.optionLabel}>AI</Text>
         </Pressable>
       </View>
     </Modal>

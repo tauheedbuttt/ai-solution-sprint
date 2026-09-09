@@ -4,8 +4,9 @@ import { CaptureMenu } from '../../components/capturemenu';
 import { Sheet } from '../../components/sheet';
 import { ScanFlow } from './scanflow';
 import { LogFlow } from './logflow';
+import { AiChat } from './aichat';
 
-type flow = 'scan' | 'log' | null;
+type flow = 'scan' | 'log' | 'ai' | null;
 
 export function CaptureRoot() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,6 +32,9 @@ export function CaptureRoot() {
       </Sheet>
       <Sheet visible={flow === 'log'} onClose={close}>
         {flow === 'log' ? <LogFlow onClose={close} onDone={close} /> : null}
+      </Sheet>
+      <Sheet visible={flow === 'ai'} onClose={close}>
+        {flow === 'ai' ? <AiChat onClose={close} /> : null}
       </Sheet>
     </>
   );
