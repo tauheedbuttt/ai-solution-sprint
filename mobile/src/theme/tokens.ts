@@ -23,6 +23,8 @@ export const color = {
 
 export const radius = {
   none: 0,
+  md: 12,
+  lg: 20,
   pill: 999,
 } as const;
 

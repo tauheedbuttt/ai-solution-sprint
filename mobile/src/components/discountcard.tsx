@@ -1,8 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color, borderWidth, radius, type as t, space } from "../theme/tokens";
+import { color, radius, type as t, space } from "../theme/tokens";
 import { ProgressBar } from "./progressbar";
-import { PillButton } from "./pillbutton";
 import type { discount } from "../services/api";
 
 type props = {
@@ -21,10 +20,10 @@ export function DiscountCard({ discount, progressCount, onPress }: props) {
 
   return (
     <Pressable style={styles.card} onPress={onPress}>
-      <View style={styles.hero}>
+      <View style={styles.thumb}>
         <Ionicons
           name="image-outline"
-          size={28}
+          size={22}
           color={color.mutedForeground}
         />
       </View>
@@ -48,34 +47,23 @@ export function DiscountCard({ discount, progressCount, onPress }: props) {
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
+    flexDirection: "row",
+    borderRadius: radius.lg,
     backgroundColor: color.card,
+    padding: space.md,
+    gap: space.md,
   },
-  hero: {
-    height: 120,
+  thumb: {
+    width: 96,
+    height: 96,
+    borderRadius: radius.md,
     backgroundColor: color.secondary,
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {
-    position: "absolute",
-    top: space.sm,
-    left: space.sm,
-    width: 32,
-    height: 32,
-    borderRadius: radius.pill,
-    backgroundColor: color.card,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoLetter: { ...t.body, fontWeight: "700", color: color.foreground },
-  body: { padding: space.md, gap: space.xs },
+  body: { flex: 1, justifyContent: "center", gap: space.xs },
   actor: { ...t.eyebrow, color: color.mint },
-  headline: { ...t.h3, color: color.foreground, minHeight: 48 },
+  headline: { ...t.h3, color: color.foreground },
   eyebrow: { ...t.eyebrow, color: color.mutedForeground },
   eyebrowUnlocked: { color: color.brownInk },
 });

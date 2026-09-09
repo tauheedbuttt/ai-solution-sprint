@@ -79,8 +79,6 @@ export function DiscountsScreen() {
       <FlatList
         data={visible}
         keyExtractor={(d) => d.id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <DiscountCard
@@ -96,7 +94,7 @@ export function DiscountsScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
-  chipsScroll: { flexGrow: 0 },
+  chipsScroll: { flexGrow: 0, height: 56 },
   chips: {
     paddingHorizontal: space.lg,
     paddingTop: space.md,
@@ -104,5 +102,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   list: { padding: space.lg, gap: space.md },
-  row: { gap: space.md },
 });
