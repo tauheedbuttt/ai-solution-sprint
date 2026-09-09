@@ -1,4 +1,5 @@
 import { fetchProductById, fetchProducts } from './products.remote';
+import { postCareLog, postNextLifeRoute, postRepairRequest } from './logs.remote';
 
 export type role = 'shopper' | 'service_provider';
 
@@ -14,6 +15,10 @@ export type scoreCategory = 'health' | 'planet' | 'ethics' | 'longevity';
 
 export type scoreBreakdown = Record<scoreCategory, { value: number; tag: string }>;
 
+export type logKind = 'care' | 'repair' | 'nextLife';
+
+export type logItem = { id: string; kind: logKind; label: string; date: string; note?: string };
+
 export type product = {
   id: string;
   name: string;
@@ -22,6 +27,7 @@ export type product = {
   status: status;
   careScore?: number;
   scores?: scoreBreakdown;
+  logs?: logItem[];
 };
 
 export type event = {
@@ -458,19 +464,19 @@ export const api = {
       return added;
     },
     async logCare(productId: string, input: { type: careType; note?: string; shareAsRepairKnowledge: boolean }): Promise<void> {
-      await delay(400);
+      await postCareLog(productId, { type: input.type, note: input.note, share: input.shareAsRepairKnowledge });
       careEventsLogged += 1;
       monthsOfLifeAdded += 1;
       logEntries.push(Date.now());
       notifyChange();
     },
     async requestRepair(productId: string, input: { partnerId: string; issue: string }): Promise<void> {
-      await delay(400);
+      await postRepairRequest(productId, input);
       logEntries.push(Date.now());
       notifyChange();
     },
     async routeNextLife(productId: string, input: { route: route; partnerId?: string; retainedValue?: number }): Promise<void> {
-      await delay(400);
+      await postNextLifeRoute(productId, input);
       const product = ownedProducts.find((p) => p.id === productId);
       if (product) product.status = 'routed';
       retainedValue += input.retainedValue ?? 0;

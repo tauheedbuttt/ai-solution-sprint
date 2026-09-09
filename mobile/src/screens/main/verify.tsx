@@ -5,6 +5,7 @@ import { color, borderWidth, font, type as t, space } from '../../theme/tokens';
 import { SegmentTabs } from '../../components/segmenttabs';
 import { StatCard } from '../../components/statcard';
 import { PillButton } from '../../components/pillbutton';
+import { Timeline, type timelineItem } from '../../components/timeline';
 import { CaptureIdentify } from '../capture/captureidentify';
 import { api, type carePass, type purchaseRecord } from '../../services/api';
 
@@ -88,9 +89,6 @@ export function VerifyScreen() {
   );
 }
 
-type timelineKind = 'care' | 'repair' | 'origin';
-type timelineItem = { id: string; kind: timelineKind; label: string; date: string; note?: string };
-
 function CarePassView({ carePass, onReset }: { carePass: carePass; onReset: () => void }) {
   const [receiptFor, setReceiptFor] = useState<purchaseRecord | null>(null);
   const origin = carePass.purchaseHistory[0];
@@ -134,16 +132,7 @@ function CarePassView({ carePass, onReset }: { carePass: carePass; onReset: () =
           </View>
           <Text style={styles.sectionSubtitle}>Care, repairs and origin in one timeline</Text>
 
-          {timeline.length === 0 ? (
-            <Text style={styles.sectionEmpty}>No events logged yet.</Text>
-          ) : (
-            <View style={styles.timelineWrap}>
-              <View style={styles.timelineLine} />
-              {timeline.map((item, i) => (
-                <TimelineRow key={item.id + i} item={item} last={i === timeline.length - 1} />
-              ))}
-            </View>
-          )}
+          <Timeline items={timeline} />
         </View>
 
         <Section title="Purchase history">
@@ -272,33 +261,6 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-const timelineIcon: Record<timelineKind, keyof typeof Ionicons.glyphMap> = {
-  care: 'sparkles-outline',
-  repair: 'build-outline',
-  origin: 'pricetag-outline',
-};
-
-const timelineDotBg: Record<timelineKind, string> = {
-  care: `${color.mint}40`,
-  repair: color.secondary,
-  origin: color.border,
-};
-
-function TimelineRow({ item, last }: { item: timelineItem; last: boolean }) {
-  return (
-    <View style={[styles.timelineRow, last && styles.timelineRowLast]}>
-      <View style={[styles.timelineDot, { backgroundColor: timelineDotBg[item.kind] }]}>
-        <Ionicons name={timelineIcon[item.kind]} size={11} color={color.mint} />
-      </View>
-      <View style={styles.timelineRowHead}>
-        <Text style={styles.timelineLabel}>{item.label}</Text>
-        <Text style={styles.timelineDate}>{formatDate(item.date)}</Text>
-      </View>
-      {item.note ? <Text style={styles.timelineNote}>{item.note}</Text> : null}
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: color.background },
   header: { padding: space.lg, paddingBottom: space.sm, gap: space.xs },
@@ -330,24 +292,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   lifecyclePillLabel: { ...t.bodySmall, fontWeight: '600', color: color.mint },
-  timelineWrap: { position: 'relative', paddingLeft: space.xl, marginTop: space.xs },
-  timelineLine: { position: 'absolute', left: 9, top: 6, bottom: 6, width: 1.5, backgroundColor: color.border },
-  timelineRow: { position: 'relative', paddingBottom: space.lg },
-  timelineRowLast: { paddingBottom: 0 },
-  timelineDot: {
-    position: 'absolute',
-    left: -space.xl,
-    top: 0,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  timelineRowHead: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: space.sm },
-  timelineLabel: { ...t.body, fontWeight: '600', color: color.foreground },
-  timelineDate: { ...t.bodySmall, color: color.mutedForeground },
-  timelineNote: { ...t.bodySmall, color: color.mutedForeground, marginTop: 2 },
   purchaseRow: {
     flexDirection: 'row',
     alignItems: 'center',

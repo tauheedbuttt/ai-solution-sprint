@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { color, borderWidth, type as t, space } from "../../theme/tokens";
 import { ScoreRing } from "../../components/scorering";
 import { ScoreBars } from "../../components/scorebars";
 import { Skeleton } from "../../components/skeleton";
 import { Sheet } from "../../components/sheet";
+import { Timeline } from "../../components/timeline";
 import { LogFlow, type action } from "../capture/logflow";
 import { api } from "../../services/api";
 
@@ -18,6 +19,7 @@ const actions: { value: action; label: string; icon: keyof typeof Ionicons.glyph
 
 export function ProductDetailScreen({ productId, onClose }: { productId: string; onClose: () => void }) {
   const [logAction, setLogAction] = useState<action | null>(null);
+  const queryClient = useQueryClient();
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", productId],
@@ -65,6 +67,11 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
               <ScoreBars scores={product.scores} />
             </View>
           ) : null}
+
+          <View style={styles.logSection}>
+            <Text style={styles.logTitle}>Activity</Text>
+            <Timeline items={product.logs ?? []} />
+          </View>
         </ScrollView>
       )}
 
@@ -98,7 +105,10 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
             initialProduct={product}
             initialAction={logAction}
             onClose={() => setLogAction(null)}
-            onDone={() => setLogAction(null)}
+            onDone={() => {
+              setLogAction(null);
+              queryClient.invalidateQueries({ queryKey: ["product", productId] });
+            }}
           />
         ) : null}
       </Sheet>
@@ -135,6 +145,8 @@ const styles = StyleSheet.create({
   name: { ...t.h2, color: color.foreground },
   category: { ...t.body, color: color.mutedForeground },
   scores: { padding: space.lg, paddingTop: 0 },
+  logSection: { padding: space.lg, paddingTop: 0, gap: space.sm },
+  logTitle: { ...t.h3, color: color.foreground },
   skeletonBrand: { height: 14, width: "30%", borderRadius: 0 },
   skeletonName: { height: 24, width: "70%", borderRadius: 0 },
   skeletonCategory: { height: 16, width: "40%", borderRadius: 0 },

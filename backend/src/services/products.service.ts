@@ -2,7 +2,7 @@ import { supabase } from '../config/supabaseClient';
 import { productRow, toDetail, toListItem } from '../types/product';
 
 const listColumns = 'id, name, brand, category, status, care_score';
-const detailColumns = 'id, name, brand, category, status, care_score, scores';
+const detailColumns = 'id, name, brand, category, status, care_score, scores, care_logs(*), repair_requests(*), next_life_routes(*)';
 
 export async function listProducts(search?: string) {
   let query = supabase.from('products').select(listColumns).order('name', { ascending: true });
