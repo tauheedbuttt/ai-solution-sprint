@@ -44,6 +44,15 @@ export type discount = {
   threshold: { count: number; period: period };
 };
 
+export type benefit = {
+  id: string;
+  employerName: string;
+  headline: string;
+  description: string;
+  terms: string;
+  threshold: { count: number; period: period };
+};
+
 export type summary = {
   careScore: number;
   careScoreNote: string;
@@ -156,6 +165,43 @@ const discounts: discount[] = [
     threshold: { count: 3, period: 'month' },
   },
 ];
+
+const benefits: benefit[] = [
+  {
+    id: 'b1',
+    employerName: 'Nordic Health Oy',
+    headline: 'Free annual health checkup',
+    description: 'Employees who keep their care logging active unlock a fully covered annual health checkup through Epassi.',
+    terms: 'One checkup per calendar year. Book via the Epassi partner clinic list.',
+    threshold: { count: 3, period: 'month' },
+  },
+  {
+    id: 'b2',
+    employerName: 'Nordic Health Oy',
+    headline: '€30 wellness credit',
+    description: 'A monthly wellness credit for employees who log care consistently, usable at gyms and massage partners.',
+    terms: 'Credit expires at month end. Cannot be carried over or exchanged for cash.',
+    threshold: { count: 5, period: 'month' },
+  },
+  {
+    id: 'b3',
+    employerName: 'Nordic Health Oy',
+    headline: 'Bike maintenance voucher',
+    description: 'A voucher covering a full bike service, unlocked by staying active with care logging through the week.',
+    terms: 'Redeemable at any Epassi-affiliated bike shop. One voucher per week.',
+    threshold: { count: 2, period: 'week' },
+  },
+  {
+    id: 'b4',
+    employerName: 'Nordic Health Oy',
+    headline: 'Extra day off',
+    description: 'A full year of consistent care logging earns employees one additional paid day off.',
+    terms: 'Day must be taken within the following calendar year. Subject to manager approval.',
+    threshold: { count: 20, period: 'year' },
+  },
+];
+
+let identified = false;
 
 const now = Date.now();
 const day = 86400000;
@@ -328,6 +374,27 @@ export const api = {
     async get(id: string): Promise<discount | null> {
       await delay(200);
       return discounts.find((d) => d.id === id) ?? null;
+    },
+  },
+  epassi: {
+    async isIdentified(): Promise<boolean> {
+      await delay(150);
+      return identified;
+    },
+    async enableIdentification(): Promise<void> {
+      await delay(400);
+      identified = true;
+      notifyChange();
+    },
+    benefits: {
+      async list(): Promise<benefit[]> {
+        await delay(300);
+        return benefits;
+      },
+      async get(id: string): Promise<benefit | null> {
+        await delay(200);
+        return benefits.find((b) => b.id === id) ?? null;
+      },
     },
   },
 };
