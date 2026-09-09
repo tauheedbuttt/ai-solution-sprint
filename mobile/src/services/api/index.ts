@@ -8,6 +8,10 @@ export type user = {
 
 export type status = 'active' | 'draft' | 'routed';
 
+export type scoreCategory = 'health' | 'planet' | 'ethics' | 'longevity';
+
+export type scoreBreakdown = Record<scoreCategory, { value: number; tag: string }>;
+
 export type product = {
   id: string;
   name: string;
@@ -15,6 +19,7 @@ export type product = {
   category: string;
   status: status;
   careScore?: number;
+  scores?: scoreBreakdown;
 };
 
 export type event = {
@@ -100,8 +105,34 @@ export type summary = {
 };
 
 const ownedProducts: product[] = [
-  { id: 'p1', name: 'EcoBrew Coffee Maker', brand: 'EcoBrew', category: 'Appliances', status: 'active', careScore: 78 },
-  { id: 'p2', name: 'Trailhead Backpack', brand: 'Trailhead', category: 'Outdoor', status: 'active', careScore: 64 },
+  {
+    id: 'p1',
+    name: 'EcoBrew Coffee Maker',
+    brand: 'EcoBrew',
+    category: 'Appliances',
+    status: 'active',
+    careScore: 78,
+    scores: {
+      health: { value: 82, tag: 'Low-tox' },
+      planet: { value: 64, tag: 'Recycled inputs' },
+      ethics: { value: 48, tag: 'Partial audit' },
+      longevity: { value: 91, tag: 'Repairable' },
+    },
+  },
+  {
+    id: 'p2',
+    name: 'Trailhead Backpack',
+    brand: 'Trailhead',
+    category: 'Outdoor',
+    status: 'active',
+    careScore: 64,
+    scores: {
+      health: { value: 70, tag: 'Low-tox' },
+      planet: { value: 58, tag: 'Recycled inputs' },
+      ethics: { value: 66, tag: 'Verified audit' },
+      longevity: { value: 75, tag: 'Repairable' },
+    },
+  },
   { id: 'p3', name: 'Nordic Wool Sweater', category: 'Clothing', status: 'draft' },
 ];
 

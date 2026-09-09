@@ -15,6 +15,10 @@ export const color = {
   input: '#ffffff29',
   ring: '#f08169',
   codeKey: '#7dd3fc', // JSON syntax highlight: keys and string values
+  health: '#ffc033',
+  planet: '#86af69',
+  ethics: '#7897ff',
+  longevity: '#e09d81',
 } as const;
 
 export const radius = {

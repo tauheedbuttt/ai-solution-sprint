@@ -24,12 +24,19 @@ const routeOptions: { value: route; label: string }[] = [
   { value: 'recycle', label: 'Recycle' },
 ];
 
-type action = 'care' | 'repair' | 'nextLife';
+export type action = 'care' | 'repair' | 'nextLife';
 
-export function LogFlow({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
+type props = {
+  onClose: () => void;
+  onDone: () => void;
+  initialProduct?: product;
+  initialAction?: action;
+};
+
+export function LogFlow({ onClose, onDone, initialProduct, initialAction }: props) {
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState<product[]>([]);
-  const [selected, setSelected] = useState<product | null>(null);
+  const [selected, setSelected] = useState<product | null>(initialProduct ?? null);
 
   useEffect(() => {
     api.products.search(query).then(setProducts);
@@ -58,7 +65,15 @@ export function LogFlow({ onClose, onDone }: { onClose: () => void; onDone: () =
     );
   }
 
-  return <ProductDetail product={selected} onBack={() => setSelected(null)} onClose={onClose} onDone={onDone} />;
+  return (
+    <ProductDetail
+      product={selected}
+      onBack={() => setSelected(null)}
+      onClose={onClose}
+      onDone={onDone}
+      initialAction={initialAction}
+    />
+  );
 }
 
 function ProductDetail({
@@ -66,13 +81,15 @@ function ProductDetail({
   onBack,
   onClose,
   onDone,
+  initialAction,
 }: {
   product: product;
   onBack: () => void;
   onClose: () => void;
   onDone: () => void;
+  initialAction?: action;
 }) {
-  const [action, setAction] = useState<action>('care');
+  const [action, setAction] = useState<action>(initialAction ?? 'care');
   const [busy, setBusy] = useState(false);
   const [partners, setPartners] = useState<partner[]>([]);
 

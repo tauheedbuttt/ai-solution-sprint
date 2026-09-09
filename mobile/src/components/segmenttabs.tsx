@@ -18,14 +18,11 @@ export function SegmentTabs({ value, onChange, options }: props) {
           <Pressable
             key={opt.value}
             onPress={() => onChange(opt.value)}
-            style={styles.item}
+            style={[styles.item, active && styles.itemActive]}
           >
             <Text style={[styles.label, active && styles.labelActive]}>
               {opt.label}
             </Text>
-            <View
-              style={[styles.underline, active && styles.underlineActive]}
-            />
           </Pressable>
         );
       })}
@@ -38,17 +35,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: space.lg,
     paddingVertical: space.sm,
-    gap: space.lg,
+    gap: space.xs,
     borderBottomWidth: borderWidth.hairline,
     borderBottomColor: color.border,
   },
-  item: { alignItems: "center", gap: space.xs, paddingVertical: space.sm },
-  label: { ...t.eyebrow, color: color.mutedForeground },
-  labelActive: { color: color.foreground },
-  underline: {
-    height: 2,
-    alignSelf: "stretch",
-    backgroundColor: "transparent",
+  item: {
+    paddingHorizontal: space.md,
+    paddingVertical: space.sm,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  underlineActive: { backgroundColor: color.brownInk },
+  itemActive: {
+    backgroundColor: color.foreground,
+  },
+  label: {
+    ...t.eyebrow,
+    color: color.foreground,
+  },
+  labelActive: {
+    color: color.background,
+  },
 });

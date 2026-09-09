@@ -5,12 +5,15 @@ import { EventCarousel } from "../../components/eventcarousel";
 import { CareScoreCard } from "../../components/carescorecard";
 import { StatRow } from "../../components/statrow";
 import { ProductCard } from "../../components/productcard";
+import { Sheet } from "../../components/sheet";
+import { ProductDetailScreen } from "./productdetail";
 import { api, type event, type summary, type product } from "../../services/api";
 
 export function HomeScreen() {
   const [events, setEvents] = useState<event[]>([]);
   const [summary, setSummary] = useState<summary>();
   const [products, setProducts] = useState<product[]>([]);
+  const [openProduct, setOpenProduct] = useState<product | null>(null);
 
   useEffect(() => {
     function load() {
@@ -23,34 +26,40 @@ export function HomeScreen() {
   }, []);
 
   return (
-    <ScrollView style={styles.root} contentContainerStyle={styles.content}>
-      {summary ? (
-        <View style={styles.stats}>
-          <CareScoreCard score={summary.careScore} note={summary.careScoreNote} />
-          <StatRow
-            stats={[
-              { label: "Items", value: String(summary.itemsInLoop) },
-              { label: "Events", value: String(summary.careEventsLogged) },
-              { label: "In use", value: String(summary.stillInUse) },
-              { label: "Months", value: `+${summary.monthsOfLifeAdded}`, valueColor: color.mint },
-            ]}
-          />
-        </View>
-      ) : null}
+    <>
+      <ScrollView style={styles.root} contentContainerStyle={styles.content}>
+        {summary ? (
+          <View style={styles.stats}>
+            <CareScoreCard score={summary.careScore} note={summary.careScoreNote} />
+            <StatRow
+              stats={[
+                { label: "Items", value: String(summary.itemsInLoop) },
+                { label: "Events", value: String(summary.careEventsLogged) },
+                { label: "In use", value: String(summary.stillInUse) },
+                { label: "Months", value: `+${summary.monthsOfLifeAdded}`, valueColor: color.mint },
+              ]}
+            />
+          </View>
+        ) : null}
 
-      <EventCarousel events={events} />
+        <EventCarousel events={events} />
 
-      <View style={styles.products}>
-        <View style={styles.productsHeader}>
-          <Text style={styles.productsTitle}>Products</Text>
+        <View style={styles.products}>
+          <View style={styles.productsHeader}>
+            <Text style={styles.productsTitle}>Products</Text>
+          </View>
+          <View style={styles.grid}>
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} onPress={() => setOpenProduct(p)} />
+            ))}
+          </View>
         </View>
-        <View style={styles.grid}>
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+
+      <Sheet visible={!!openProduct} onClose={() => setOpenProduct(null)}>
+        {openProduct ? <ProductDetailScreen product={openProduct} onClose={() => setOpenProduct(null)} /> : null}
+      </Sheet>
+    </>
   );
 }
 

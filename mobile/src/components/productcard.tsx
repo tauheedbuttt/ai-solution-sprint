@@ -1,12 +1,12 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { color, borderWidth, type as t, space } from "../theme/tokens";
 import { ScoreRing } from "./scorering";
 import type { product } from "../services/api";
 
-export function ProductCard({ product }: { product: product }) {
+export function ProductCard({ product, onPress }: { product: product; onPress?: () => void }) {
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.image}>
         <Ionicons name="image-outline" size={28} color={color.mutedForeground} />
         {product.careScore !== undefined ? (
@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: product }) {
         <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
         <Text style={styles.category} numberOfLines={1}>{product.category}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
