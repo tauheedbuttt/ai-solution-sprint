@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavigationContainer, DarkTheme, type Theme } from '@react-navigation/native';
 import { SignInScreen } from '../screens/auth/signin';
 import { Shell } from './shell';
@@ -11,9 +12,15 @@ const navTheme: Theme = {
 
 export function RootNavigator() {
   const { user } = useAuth();
+  const [activeRoute, setActiveRoute] = useState<string>();
+
   return (
-    <NavigationContainer theme={navTheme}>
-      {user ? <Shell /> : <SignInScreen />}
+    <NavigationContainer
+      theme={navTheme}
+      onStateChange={(state) => setActiveRoute(state?.routes[state.index]?.name)}
+      onReady={() => setActiveRoute('Home')}
+    >
+      {user ? <Shell activeRoute={activeRoute} /> : <SignInScreen />}
     </NavigationContainer>
   );
 }

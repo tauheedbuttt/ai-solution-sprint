@@ -1,11 +1,8 @@
 import { View, StyleSheet } from 'react-native';
-import { useNavigationState } from '@react-navigation/native';
 import { Tabs } from './tabs';
 import { CaptureRoot } from '../screens/capture/captureroot';
 
-export function Shell() {
-  const activeRoute = useNavigationState((state) => state?.routes[state.index]?.name);
-
+export function Shell({ activeRoute }: { activeRoute?: string }) {
   return (
     <View style={styles.root}>
       <Tabs />
