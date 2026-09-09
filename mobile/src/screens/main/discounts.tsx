@@ -19,7 +19,7 @@ const actorTabs: { value: actorType; label: string }[] = [
 ];
 
 export function DiscountsScreen() {
-  const [actor, setActor] = useState<actorType>("brand");
+  const [actor, setActor] = useState<actorType | null>(null);
   const [discounts, setDiscounts] = useState<discount[]>([]);
   const [progress, setProgress] = useState<Partial<Record<period, number>>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export function DiscountsScreen() {
   }, []);
 
   const visible = useMemo(
-    () => discounts.filter((d) => d.actorType === actor),
+    () => (actor ? discounts.filter((d) => d.actorType === actor) : discounts),
     [discounts, actor],
   );
   const selected = discounts.find((d) => d.id === selectedId) || null;
@@ -70,7 +70,9 @@ export function DiscountsScreen() {
             key={opt.value}
             label={opt.label}
             active={opt.value === actor}
-            onPress={() => setActor(opt.value)}
+            onPress={() =>
+              setActor((prev) => (prev === opt.value ? null : opt.value))
+            }
           />
         ))}
       </ScrollView>

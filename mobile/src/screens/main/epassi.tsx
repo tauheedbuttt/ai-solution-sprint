@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color, borderWidth, radius, type as t, space } from "../../theme/tokens";
+import {
+  color,
+  borderWidth,
+  radius,
+  type as t,
+  space,
+} from "../../theme/tokens";
 import { PillButton } from "../../components/pillbutton";
 import { BenefitCard } from "../../components/benefitcard";
 import { BenefitDetail } from "../../components/benefitdetail";
@@ -23,8 +29,12 @@ export function EpassiScreen() {
     function load() {
       api.epassi.benefits.list().then(async (list) => {
         setBenefits(list);
-        const periods = Array.from(new Set(list.map((b) => b.threshold.period)));
-        const counts = await Promise.all(periods.map((p) => api.stats.logsInPeriod(p)));
+        const periods = Array.from(
+          new Set(list.map((b) => b.threshold.period)),
+        );
+        const counts = await Promise.all(
+          periods.map((p) => api.stats.logsInPeriod(p)),
+        );
         setProgress(Object.fromEntries(periods.map((p, i) => [p, counts[i]])));
       });
     }
@@ -48,7 +58,11 @@ export function EpassiScreen() {
     return (
       <View style={styles.gateRoot}>
         <View style={styles.gateIcon}>
-          <Ionicons name="finger-print-outline" size={32} color={color.brownInk} />
+          <Ionicons
+            name="finger-print-outline"
+            size={32}
+            color={color.brownInk}
+          />
         </View>
         <Text style={styles.gateEyebrow}>strong identification</Text>
         <Text style={styles.gateHeadline}>Unlock your employer benefits</Text>
@@ -81,8 +95,8 @@ export function EpassiScreen() {
       <FlatList
         data={benefits}
         keyExtractor={(b) => b.id}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
+        numColumns={1}
+        // columnWrapperStyle={styles.row}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <View style={styles.header}>
