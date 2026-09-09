@@ -47,3 +47,7 @@ export const space = {
   lg: 24,
   xl: 32,
 } as const;
+
+export const layout = {
+  maxWidth: 480,
+} as const;
