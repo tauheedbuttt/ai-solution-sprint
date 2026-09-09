@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color, borderWidth, radius, type as t, space } from "../theme/tokens";
+import { color, borderWidth, type as t, space } from "../theme/tokens";
+import { ScoreRing } from "./scorering";
 import type { product } from "../services/api";
 
 export function ProductCard({ product }: { product: product }) {
@@ -10,7 +11,7 @@ export function ProductCard({ product }: { product: product }) {
         <Ionicons name="image-outline" size={28} color={color.mutedForeground} />
         {product.careScore !== undefined ? (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>{product.careScore}</Text>
+            <ScoreRing score={product.careScore} size={44} />
           </View>
         ) : null}
       </View>
@@ -35,20 +36,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  badge: {
-    position: "absolute",
-    top: space.sm,
-    right: space.sm,
-    width: 30,
-    height: 30,
-    borderRadius: radius.pill,
-    backgroundColor: color.background,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  badgeText: { ...t.bodySmall, fontWeight: "700", color: color.foreground },
+  badge: { position: "absolute", top: space.sm, right: space.sm },
   body: { gap: 2 },
   brand: { ...t.eyebrow, color: color.mutedForeground },
   name: { ...t.body, fontWeight: "600", color: color.foreground },
