@@ -37,6 +37,8 @@ export type productDetail = productListItem & {
   logs?: logItem[];
 };
 
+export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string };
+
 const careLabel: Record<string, string> = { clean: 'Cleaned', store: 'Stored', rotate: 'Rotated', service: 'Serviced' };
 const routeLabel: Record<string, string> = {
   reuse: 'Routed for reuse',
@@ -88,4 +90,11 @@ export function toDetail(row: productRow): productDetail {
     scores: row.scores ?? undefined,
     logs: combineLogs(row),
   };
+}
+
+export function toRecentLogItems(rows: productRow[], limit: number): recentLogItem[] {
+  const all = rows.flatMap((row) =>
+    combineLogs(row).map((log) => ({ ...log, productId: row.id, productName: row.name, productBrand: row.brand ?? undefined })),
+  );
+  return all.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, limit);
 }

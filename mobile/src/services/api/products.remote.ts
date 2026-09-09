@@ -1,8 +1,13 @@
 import { httpClient } from './httpClient';
-import type { product } from './index';
+import type { product, recentLogItem } from './index';
 
 export async function fetchProducts(search?: string): Promise<product[]> {
   const { data } = await httpClient.get<product[]>('/products', { params: search ? { q: search } : undefined });
+  return data;
+}
+
+export async function fetchRecentLogs(limit: number): Promise<recentLogItem[]> {
+  const { data } = await httpClient.get<recentLogItem[]>('/products/logs/recent', { params: { limit } });
   return data;
 }
 

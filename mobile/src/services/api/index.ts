@@ -1,4 +1,4 @@
-import { fetchProductById, fetchProducts } from './products.remote';
+import { fetchProductById, fetchProducts, fetchRecentLogs } from './products.remote';
 import { postCareLog, postNextLifeRoute, postRepairRequest } from './logs.remote';
 
 export type role = 'shopper' | 'service_provider';
@@ -18,6 +18,8 @@ export type scoreBreakdown = Record<scoreCategory, { value: number; tag: string 
 export type logKind = 'care' | 'repair' | 'nextLife';
 
 export type logItem = { id: string; kind: logKind; label: string; date: string; note?: string };
+
+export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string };
 
 export type product = {
   id: string;
@@ -418,6 +420,9 @@ export const api = {
     },
     async get(id: string): Promise<product | null> {
       return fetchProductById(id);
+    },
+    async recentLogs(limit: number): Promise<recentLogItem[]> {
+      return fetchRecentLogs(limit);
     },
     async recognize(code: string): Promise<product | null> {
       await delay(600);

@@ -1,5 +1,5 @@
 import { supabase } from '../config/supabaseClient';
-import { productRow, toDetail, toListItem } from '../types/product';
+import { productRow, toDetail, toListItem, toRecentLogItems } from '../types/product';
 import { embedText } from './embedding.service';
 
 const listColumns = 'id, name, brand, category, status, care_score';
@@ -49,4 +49,10 @@ export async function getProductById(id: string) {
   if (error) throw error;
   if (!data) return null;
   return toDetail(data as unknown as productRow);
+}
+
+export async function listRecentLogs(limit: number) {
+  const { data, error } = await supabase.from('products').select(detailColumns);
+  if (error) throw error;
+  return toRecentLogItems(data as unknown as productRow[], limit);
 }

@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   View,
   Text,
@@ -37,6 +38,8 @@ type message = {
 type reaction = "up" | "down";
 
 // grounded in the current demo catalog: EcoBrew Coffee Maker (p1, active), Trailhead Backpack (p2, active), Nordic Wool Sweater (p3, draft)
+const mutatingTools = new Set(["addCareLog", "addRepairRequest", "addNextLifeRoute"]);
+
 const suggestedPrompts = [
   "Log a clean for my Trailhead Backpack",
   "File a repair request for my coffee maker",
@@ -142,6 +145,7 @@ export function AiChat({ onClose }: { onClose: () => void }) {
   const scrollRef = useRef<ScrollView>(null);
   const sessionId = useRef(mockId());
   const history = useRef<agentMessage[]>([]);
+  const queryClient = useQueryClient();
 
   function toggleReaction(id: string, value: reaction) {
     setReactions((r) => ({ ...r, [id]: r[id] === value ? undefined : value }));
@@ -179,6 +183,11 @@ export function AiChat({ onClose }: { onClose: () => void }) {
                 : msg,
             ),
           );
+          if (mutatingTools.has(event.tool)) {
+            queryClient.invalidateQueries({ queryKey: ["recentLogs"] });
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            queryClient.invalidateQueries({ queryKey: ["product"] });
+          }
         } else if (event.type === "text") {
           setMessages((m) =>
             m.map((msg) =>
