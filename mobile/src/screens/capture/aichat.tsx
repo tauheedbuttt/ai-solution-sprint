@@ -19,6 +19,7 @@ import {
 } from "../../theme/tokens";
 import { SheetHeader } from "../../components/sheetheader";
 import { TextField } from "../../components/textfield";
+import { streamAgentChat, type agentMessage } from "../../services/api/chat.remote";
 
 type step = {
   id: string;
@@ -35,108 +36,12 @@ type message = {
 };
 type reaction = "up" | "down";
 
+// grounded in the current demo catalog: EcoBrew Coffee Maker (p1, active), Trailhead Backpack (p2, active), Nordic Wool Sweater (p3, draft)
 const suggestedPrompts = [
   "Log a clean for my Trailhead Backpack",
-  "What's my care score right now?",
+  "File a repair request for my coffee maker",
+  "Donate my Nordic Wool Sweater",
 ];
-
-// UI-only mock: canned tool traces per intent, no real agent wired up.
-function respond(prompt: string): { steps: step[]; text: string } {
-  const q = prompt.toLowerCase();
-  if (q.includes("clean") || (q.includes("log") && q.includes("care"))) {
-    return {
-      steps: [
-        {
-          id: "s1",
-          label: "Searched product catalog",
-          tool: "products.search",
-          params: { query: "backpack" },
-          result: { matches: [{ id: "p2", name: "Trailhead Backpack" }] },
-        },
-        {
-          id: "s2",
-          label: "Logged a clean",
-          tool: "ownershipLog.logCare",
-          params: { productId: "p2", type: "clean" },
-          result: { logged: true },
-        },
-      ],
-      text: "Logged a clean for your Trailhead Backpack. Care score should tick up shortly.",
-    };
-  }
-  if (q.includes("score")) {
-    return {
-      steps: [
-        {
-          id: "s1",
-          label: "Looked up care score",
-          tool: "stats.summary",
-          params: {},
-          result: { score: 78 },
-        },
-      ],
-      text: "Your care score is 78 — half planet impact of what you own, half how you care for it.",
-    };
-  }
-  if (q.includes("repair") || q.includes("partner") || q.includes("jacket")) {
-    return {
-      steps: [
-        {
-          id: "s1",
-          label: "Looked up repair providers",
-          tool: "partners.list",
-          params: { category: "fashion", type: "repair" },
-          result: {
-            providers: [
-              {
-                id: "11782785-d7c5-4f0e-b043-57eb5a941469",
-                name: "Mendly Tailoring",
-                type: "repair",
-                categories: ["fashion"],
-                city: "Helsinki",
-                country: "Finland",
-                verified: true,
-                website: "https://mendly.fi",
-              },
-            ],
-          },
-        },
-      ],
-      text: "We found one verified repair provider for fashion items in our network:\n\nMendly Tailoring (Helsinki, Finland) - mendly.fi\n\nIf you have a specific jacket registered in your Care Loop account, we can check its care guide or repair options directly.",
-    };
-  }
-  if (q.includes("discount") || q.includes("benefit")) {
-    return {
-      steps: [
-        {
-          id: "s1",
-          label: "Looked up active discounts",
-          tool: "discounts.list",
-          params: {},
-          result: {
-            discounts: [
-              { partner: "Iittala", percentOff: 15 },
-              { partner: "FixIt Helsinki", note: "free diagnostic" },
-            ],
-          },
-        },
-      ],
-      text: "You've unlocked 2 discounts this week: 15% off Iittala, free FixIt Helsinki diagnostic.",
-    };
-  }
-  return {
-    steps: [
-      {
-        id: "s1",
-        label: "Searched ownership log",
-        tool: "ownershipLog.search",
-        params: { query: prompt },
-        result: { matches: 0 },
-      },
-    ],
-    text: "Noted. Demo agent — wire this up to a real tool loop later.",
-  };
-}
 
 type jsonTokenKind = "key" | "string" | "literal" | "punct";
 type jsonToken = { text: string; kind: jsonTokenKind };
@@ -235,12 +140,14 @@ export function AiChat({ onClose }: { onClose: () => void }) {
     Record<string, reaction | undefined>
   >({});
   const scrollRef = useRef<ScrollView>(null);
+  const sessionId = useRef(mockId());
+  const history = useRef<agentMessage[]>([]);
 
   function toggleReaction(id: string, value: reaction) {
     setReactions((r) => ({ ...r, [id]: r[id] === value ? undefined : value }));
   }
 
-  function send(prompt: string) {
+  async function send(prompt: string) {
     const text = prompt.trim();
     if (!text || busy) return;
     setInput("");
@@ -253,11 +160,18 @@ export function AiChat({ onClose }: { onClose: () => void }) {
       userMsg,
       { id: agentId, role: "agent", text: "", steps: [] },
     ]);
+    history.current = [...history.current, { role: "user", content: text }];
 
-    const { steps, text: answer } = respond(text);
-    steps.forEach((step, i) => {
-      setTimeout(
-        () => {
+    try {
+      await streamAgentChat(history.current, sessionId.current, (event) => {
+        if (event.type === "tool") {
+          const step: step = {
+            id: event.id,
+            label: event.label,
+            tool: event.tool,
+            params: event.params as Record<string, unknown>,
+            result: event.result as Record<string, unknown>,
+          };
           setMessages((m) =>
             m.map((msg) =>
               msg.id === agentId
@@ -265,21 +179,38 @@ export function AiChat({ onClose }: { onClose: () => void }) {
                 : msg,
             ),
           );
-          scrollRef.current?.scrollToEnd({ animated: true });
-        },
-        (i + 1) * 500,
-      );
-    });
-    setTimeout(
-      () => {
-        setMessages((m) =>
-          m.map((msg) => (msg.id === agentId ? { ...msg, text: answer } : msg)),
-        );
+        } else if (event.type === "text") {
+          setMessages((m) =>
+            m.map((msg) =>
+              msg.id === agentId
+                ? { ...msg, text: msg.text + event.delta }
+                : msg,
+            ),
+          );
+        } else if (event.type === "done") {
+          history.current = [...history.current, ...event.messages];
+        } else if (event.type === "error") {
+          setMessages((m) =>
+            m.map((msg) =>
+              msg.id === agentId
+                ? { ...msg, text: `Something went wrong: ${event.message}` }
+                : msg,
+            ),
+          );
+        }
         scrollRef.current?.scrollToEnd({ animated: true });
-        setBusy(false);
-      },
-      (steps.length + 1) * 500,
-    );
+      });
+    } catch (err) {
+      setMessages((m) =>
+        m.map((msg) =>
+          msg.id === agentId
+            ? { ...msg, text: "Couldn't reach the assistant. Try again." }
+            : msg,
+        ),
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

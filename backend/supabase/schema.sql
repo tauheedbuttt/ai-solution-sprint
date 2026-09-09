@@ -77,3 +77,34 @@ select * from (values
   ('p2', 'donate', null::text, null::numeric, now() - interval '3 days')
 ) as v(product_id, route, partner_id, retained_value, created_at)
 where not exists (select 1 from careloop.next_life_routes);
+
+-- agent product search: voyage-3.5 embeddings, 1024 dims
+create extension if not exists vector with schema extensions;
+
+alter table careloop.products add column if not exists embedding extensions.vector(1024);
+
+create or replace function careloop.match_products(
+  query_embedding extensions.vector(1024),
+  match_threshold float default 0.3,
+  match_count int default 5
+)
+returns table (
+  id text,
+  name text,
+  brand text,
+  category text,
+  status text,
+  care_score integer,
+  similarity float
+)
+language sql stable
+as $$
+  select
+    p.id, p.name, p.brand, p.category, p.status, p.care_score,
+    1 - (p.embedding <=> query_embedding) as similarity
+  from careloop.products p
+  where p.embedding is not null
+    and 1 - (p.embedding <=> query_embedding) > match_threshold
+  order by p.embedding <=> query_embedding
+  limit match_count;
+$$;
