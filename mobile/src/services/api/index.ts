@@ -31,6 +31,19 @@ export type partner = {
 export type careType = 'clean' | 'store' | 'rotate' | 'service';
 export type route = 'reuse' | 'resell' | 'donate' | 'refurbish' | 'recycle';
 
+export type actorType = 'brand' | 'service_provider' | 'retailer' | 'city';
+export type period = 'day' | 'week' | 'month' | 'year';
+
+export type discount = {
+  id: string;
+  actorType: actorType;
+  actorName: string;
+  headline: string;
+  description: string;
+  terms: string;
+  threshold: { count: number; period: period };
+};
+
 export type summary = {
   careScore: number;
   careScoreNote: string;
@@ -68,6 +81,112 @@ const events: event[] = [
   { id: 'e2', title: 'Warranty reminder', subtitle: 'EcoBrew Coffee Maker, check warranty status' },
   { id: 'e3', title: 'Community tip', subtitle: 'New repair note shared for wool sweaters' },
 ];
+
+const discounts: discount[] = [
+  {
+    id: 'd1',
+    actorType: 'brand',
+    actorName: 'Iittala',
+    headline: '15% off your next Iittala piece',
+    description: 'Owners who keep logging care get a running discount on new Iittala homeware.',
+    terms: 'One redemption per unlocked period. Cannot combine with other offers.',
+    threshold: { count: 3, period: 'week' },
+  },
+  {
+    id: 'd2',
+    actorType: 'brand',
+    actorName: 'EcoBrew',
+    headline: '20% off replacement filters',
+    description: 'Consistent care logging unlocks discounted filters and spare parts for your EcoBrew machine.',
+    terms: 'Valid at ecobrew.com checkout. Excludes bundles.',
+    threshold: { count: 10, period: 'month' },
+  },
+  {
+    id: 'd3',
+    actorType: 'service_provider',
+    actorName: 'FixIt Helsinki',
+    headline: 'Free diagnostic visit',
+    description: 'Log any care today and FixIt Helsinki waives the diagnostic fee on your next repair.',
+    terms: 'One free diagnostic per calendar day. Parts and labor charged separately.',
+    threshold: { count: 1, period: 'day' },
+  },
+  {
+    id: 'd4',
+    actorType: 'service_provider',
+    actorName: 'Repair Café Kallio',
+    headline: '2-for-1 repair session',
+    description: 'Active loggers this week get a companion repair slot at no extra cost.',
+    terms: 'Subject to slot availability at the Kallio location.',
+    threshold: { count: 5, period: 'week' },
+  },
+  {
+    id: 'd5',
+    actorType: 'retailer',
+    actorName: 'Stockmann',
+    headline: '10% off homeware this month',
+    description: 'Owners who log care through the month unlock a storewide homeware discount.',
+    terms: 'Valid in-store and online. Excludes gift cards.',
+    threshold: { count: 4, period: 'month' },
+  },
+  {
+    id: 'd6',
+    actorType: 'retailer',
+    actorName: 'Verkkokauppa.com',
+    headline: '€10 off today\'s order',
+    description: 'Log care today and take €10 off any order placed the same day.',
+    terms: 'Minimum order €50. One use per day.',
+    threshold: { count: 2, period: 'day' },
+  },
+  {
+    id: 'd7',
+    actorType: 'city',
+    actorName: 'Helsinki Card',
+    headline: 'Free year of Helsinki Card Lite',
+    description: 'A full year of consistent logging earns residents a free year of Helsinki Card Lite.',
+    terms: 'One card per resident per year. Non-transferable.',
+    threshold: { count: 12, period: 'year' },
+  },
+  {
+    id: 'd8',
+    actorType: 'city',
+    actorName: 'Espoo Green Pass',
+    headline: 'Free month of transit',
+    description: 'Espoo residents who log care through the month earn a free month of public transit.',
+    terms: 'Redeemable at any HSL service point in Espoo.',
+    threshold: { count: 3, period: 'month' },
+  },
+];
+
+const now = Date.now();
+const day = 86400000;
+const logEntries: number[] = [0, 1, 2, 5, 10, 20, 45, 100, 200].map((daysAgo) => now - daysAgo * day);
+
+function periodStart(period: period, base: Date): number {
+  const d = new Date(base);
+  if (period === 'day') {
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }
+  if (period === 'week') {
+    const weekday = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - weekday);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }
+  if (period === 'month') {
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return d.getTime();
+  }
+  d.setMonth(0, 1);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+function logsInPeriod(period: period): number {
+  const start = periodStart(period, new Date());
+  return logEntries.filter((at) => at >= start).length;
+}
 
 const planetImpactScore = 45;
 let careEventsLogged = 2;
@@ -128,6 +247,10 @@ export const api = {
         itemsInLoop: ownedProducts.length,
       };
     },
+    async logsInPeriod(period: period): Promise<number> {
+      await delay(200);
+      return logsInPeriod(period);
+    },
   },
   products: {
     async list(): Promise<product[]> {
@@ -180,10 +303,12 @@ export const api = {
       await delay(400);
       careEventsLogged += 1;
       monthsOfLifeAdded += 1;
+      logEntries.push(Date.now());
       notifyChange();
     },
     async requestRepair(productId: string, input: { partnerId: string; issue: string }): Promise<void> {
       await delay(400);
+      logEntries.push(Date.now());
       notifyChange();
     },
     async routeNextLife(productId: string, input: { route: route; partnerId?: string; retainedValue?: number }): Promise<void> {
@@ -191,7 +316,18 @@ export const api = {
       const product = ownedProducts.find((p) => p.id === productId);
       if (product) product.status = 'routed';
       retainedValue += input.retainedValue ?? 0;
+      logEntries.push(Date.now());
       notifyChange();
+    },
+  },
+  discounts: {
+    async list(actorType?: actorType): Promise<discount[]> {
+      await delay(300);
+      return actorType ? discounts.filter((d) => d.actorType === actorType) : discounts;
+    },
+    async get(id: string): Promise<discount | null> {
+      await delay(200);
+      return discounts.find((d) => d.id === id) ?? null;
     },
   },
 };
