@@ -9,7 +9,7 @@ This guide explains how to connect your **deployed CareLoop MCP Server** (hosted
 Your live, deployed MCP server endpoint:
 
 ```
-https://your-mcp-app.vercel.app/sse
+https://tcl-mcp.vercel.app/sse
 ```
 *(Replace `your-mcp-app.vercel.app` with your actual Vercel deployment URL or domain)*
 
@@ -31,7 +31,7 @@ Open your Claude Desktop config file:
 {
   "mcpServers": {
     "careloop": {
-      "url": "https://your-mcp-app.vercel.app/sse"
+      "url": "https://tcl-mcp.vercel.app/sse"
     }
   }
 }
@@ -47,7 +47,7 @@ If your Claude Desktop version requires stdio bridge for SSE:
       "args": [
         "-y",
         "mcp-remote",
-        "https://your-mcp-app.vercel.app/sse"
+        "https://tcl-mcp.vercel.app/sse"
       ]
     }
   }
@@ -63,12 +63,12 @@ If your Claude Desktop version requires stdio bridge for SSE:
 To register your deployed CareLoop MCP server in terminal:
 
 ```bash
-claude mcp add careloop https://your-mcp-app.vercel.app/sse
+claude mcp add careloop https://tcl-mcp.vercel.app/sse
 ```
 
 Or using the `mcp-remote` bridge:
 ```bash
-claude mcp add careloop npx -y mcp-remote https://your-mcp-app.vercel.app/sse
+claude mcp add careloop npx -y mcp-remote https://tcl-mcp.vercel.app/sse
 ```
 
 ---
@@ -81,7 +81,7 @@ In your Antigravity / Gemini MCP configuration (`.gemini/settings.json` or works
 {
   "mcpServers": {
     "careloop": {
-      "url": "https://your-mcp-app.vercel.app/sse"
+      "url": "https://tcl-mcp.vercel.app/sse"
     }
   }
 }
@@ -93,7 +93,7 @@ Or via bridge:
   "mcpServers": {
     "careloop": {
       "command": "npx",
-      "args": ["-y", "mcp-remote", "https://your-mcp-app.vercel.app/sse"]
+      "args": ["-y", "mcp-remote", "https://tcl-mcp.vercel.app/sse"]
     }
   }
 }
@@ -108,7 +108,7 @@ Or via bridge:
 3. Fill in the fields:
    - **Name**: `careloop`
    - **Type**: `SSE`
-   - **URL**: `https://your-mcp-app.vercel.app/sse`
+   - **URL**: `https://tcl-mcp.vercel.app/sse`
 4. Click **Save**.
 
 ---
@@ -121,7 +121,7 @@ Or via bridge:
   "mcpServers": [
     {
       "name": "careloop",
-      "url": "https://your-mcp-app.vercel.app/sse"
+      "url": "https://tcl-mcp.vercel.app/sse"
     }
   ]
 }
@@ -132,7 +132,7 @@ Or via bridge:
 {
   "mcpServers": {
     "careloop": {
-      "url": "https://your-mcp-app.vercel.app/sse"
+      "url": "https://tcl-mcp.vercel.app/sse"
     }
   }
 }
@@ -149,7 +149,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 
 const transport = new SSEClientTransport(
-  new URL('https://your-mcp-app.vercel.app/sse')
+  new URL('https://tcl-mcp.vercel.app/sse')
 );
 
 const client = new Client({ name: 'careloop-client', version: '1.0.0' }, { capabilities: {} });
