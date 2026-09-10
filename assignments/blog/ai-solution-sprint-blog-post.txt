@@ -1,0 +1,34 @@
+Two Days, One Loop: Building for Conscious Ownership at AI Solution Sprint
+
+I spent the last two days at AI Solution Sprint working on a challenge from Care Loop, and it turned out to be one of the more intense and rewarding builds I've been part of.
+
+Day 1: Finding Alignment Before Writing Code
+
+The first day was hectic in the best way. We started with brainstorming, then sat down with the case company to actually understand what they needed. The real challenge wasn't technical, it was getting a team with completely different backgrounds to agree on one direction before we touched a keyboard. Once we found that alignment, we moved straight into development and didn't really stop until late that night.
+
+The Challenge: Making Maintenance a Habit
+
+Our problem was Care Loop's core question: how do you get people to keep coming back and logging the maintenance and lifecycle activities of things they own, like home appliances? It's easy to get someone to scan a product once. Getting them to return every time they service it, repair it, or pass it on is a much harder retention problem, and that's what we set out to solve.
+
+Teamwork: Splitting Across Product, Engineering, and Feedback
+
+We organized around three dimensions: product, engineering, and user feedback. I took ownership of the engineering side, while the rest of the team focused on product development, backed by feedback from people with a sustainability background. That split let each part move fast without losing sight of whether we were building something people would actually want to use.
+
+What I Learned: Agentic Tools, Monitoring, and MCP
+
+This sprint pushed me into territory I hadn't fully worked in before. I built with the AI SDK to create agentic tools, used LangChain to monitor agent activity, and built an MCP server so Claude could plug directly into what we were building. Putting all three together in a short timeframe taught me more about agentic architecture than any tutorial could.
+
+The Insight That Stuck With Me
+
+The moment that stood out most: since our AI SDK setup already used tools to reach a solution, we realized there was no reason those same tools couldn't be exposed through our MCP server too. That means the same capabilities aren't locked to one app, they can be picked up by any AI tool that speaks MCP. It's a small shift in thinking that opens up a lot more flexibility than we expected going in.
+
+Day 2: Building the Pitch
+
+Day two was calmer. We spent it shaping the pitch we'd present to the judges, deciding together how to tell the story of what we built. Once we submitted, the pressure lifted, and we pitched to the jury. It went well.
+
+What's Next
+
+I'm taking what I built here, the agentic tool implementation, and pushing it further with the skills I picked up over these two days. This sprint gave me a real foundation to build on, not just a demo to walk away from.
+
+#AISolutionSprint
+@Haaga-Helia University of Applied Sciences @Metropolia University of Applied Sciences @AIStart @City of Helsinki @City of Vantaa @City of Espoo @Care Loop
