@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { color, borderWidth, type as t, space } from "../theme/tokens";
 import { ProgressBar } from "./progressbar";
@@ -19,11 +19,15 @@ export function BenefitCard({ benefit, progressCount, onPress }: props) {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.hero}>
-        <Ionicons
-          name="image-outline"
-          size={28}
-          color={color.mutedForeground}
-        />
+        {benefit.image ? (
+          <Image source={benefit.image} style={styles.heroImage} resizeMode="cover" />
+        ) : (
+          <Ionicons
+            name="image-outline"
+            size={28}
+            color={color.mutedForeground}
+          />
+        )}
       </View>
       <View style={styles.body}>
         <Text style={styles.actor} numberOfLines={1}>
@@ -55,7 +59,9 @@ const styles = StyleSheet.create({
     backgroundColor: color.secondary,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
+  heroImage: { width: "100%", height: "100%" },
   body: { padding: space.md, gap: space.xs },
   actor: { ...t.eyebrow, color: color.mint },
   headline: { ...t.h3, color: color.foreground, minHeight: 48 },

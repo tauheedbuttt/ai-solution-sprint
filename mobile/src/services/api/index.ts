@@ -67,6 +67,7 @@ export type benefit = {
   description: string;
   terms: string;
   threshold: { count: number; period: period };
+  image?: import('react-native').ImageSourcePropType;
 };
 
 export type confidence = 'verified' | 'estimated' | 'unverified';
@@ -288,6 +289,7 @@ const benefits: benefit[] = [
     description: 'Employees who keep their care logging active unlock a fully covered annual health checkup through Epassi.',
     terms: 'One checkup per calendar year. Book via the Epassi partner clinic list.',
     threshold: { count: 3, period: 'month' },
+    image: require('../../../assets/deals/health-checkup.png'),
   },
   {
     id: 'b2',
@@ -296,6 +298,7 @@ const benefits: benefit[] = [
     description: 'A monthly wellness credit for employees who log care consistently, usable at gyms and massage partners.',
     terms: 'Credit expires at month end. Cannot be carried over or exchanged for cash.',
     threshold: { count: 5, period: 'month' },
+    image: require('../../../assets/deals/wellness-credit.png'),
   },
   {
     id: 'b3',
@@ -304,6 +307,7 @@ const benefits: benefit[] = [
     description: 'A voucher covering a full bike service, unlocked by staying active with care logging through the week.',
     terms: 'Redeemable at any Epassi-affiliated bike shop. One voucher per week.',
     threshold: { count: 2, period: 'week' },
+    image: require('../../../assets/deals/bike-maintenance.png'),
   },
   {
     id: 'b4',
@@ -312,6 +316,7 @@ const benefits: benefit[] = [
     description: 'A full year of consistent care logging earns employees one additional paid day off.',
     terms: 'Day must be taken within the following calendar year. Subject to manager approval.',
     threshold: { count: 20, period: 'year' },
+    image: require('../../../assets/deals/day-off.png'),
   },
 ];
 
