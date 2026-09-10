@@ -18,6 +18,7 @@ export function RootNavigator() {
   return (
     <NavigationContainer
       theme={navTheme}
+      documentTitle={{ formatter: (options, route) => options?.title ?? route?.name ?? 'CareLoop' }}
       onStateChange={(state) => setActiveRoute(state?.routes[state.index]?.name)}
       onReady={() => setActiveRoute('Home')}
     >

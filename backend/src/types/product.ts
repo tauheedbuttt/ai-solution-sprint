@@ -54,9 +54,8 @@ function combineLogs(row: productRow): logItem[] {
   const care = (row.care_logs ?? []).map((c) => ({
     id: c.id,
     kind: 'care' as const,
-    label: careLabel[c.type] ?? c.type,
+    label: c.note?.trim() || careLabel[c.type] || c.type,
     date: c.created_at,
-    note: c.note ?? undefined,
   }));
   const repair = (row.repair_requests ?? []).map((r) => ({
     id: r.id,
