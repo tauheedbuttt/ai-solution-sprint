@@ -74,7 +74,7 @@ export function HomeScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Products</Text>
+            <Text style={styles.sectionTitle}>You Own</Text>
             <Pressable style={styles.viewAll} onPress={() => setShowAllProducts(true)} hitSlop={8}>
               <Text style={styles.viewAllLabel}>View all</Text>
               <Ionicons name="chevron-forward" size={14} color={color.mutedForeground} />
@@ -96,7 +96,7 @@ export function HomeScreen() {
 
       <Sheet visible={showAllProducts} onClose={() => setShowAllProducts(false)}>
         <ProductListSearch
-          title="Products"
+          title="You Own"
           onClose={() => setShowAllProducts(false)}
           onSelect={(p) => {
             setShowAllProducts(false);

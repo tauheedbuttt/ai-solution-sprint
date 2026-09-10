@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { color, type as t, space } from "../theme/tokens";
 import type { recentLogItem } from "../services/api";
@@ -20,21 +20,14 @@ export function RecentActivity({ items, onSelectProduct }: { items: recentLogIte
       {items.map((item) => (
         <Pressable key={item.id} style={styles.row} onPress={() => onSelectProduct(item.productId)}>
           <View style={styles.thumb}>
-            {item.productImageUrl ? (
-              <Image source={{ uri: item.productImageUrl }} style={styles.thumbImage} resizeMode="cover" />
-            ) : (
-              <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
-            )}
+            <Ionicons name={kindIcon[item.kind]} size={18} color={color.mint} />
           </View>
           <View style={styles.body}>
             <View style={styles.headRow}>
-              <Text style={styles.product} numberOfLines={1}>{item.productName}</Text>
+              <Text style={styles.label} numberOfLines={1}>{item.label}</Text>
               <Text style={styles.date}>{formatDate(item.date)}</Text>
             </View>
-            <View style={styles.labelRow}>
-              <Ionicons name={kindIcon[item.kind]} size={12} color={color.mint} />
-              <Text style={styles.label} numberOfLines={1}>{item.label}</Text>
-            </View>
+            <Text style={styles.product} numberOfLines={1}>{item.productName}</Text>
           </View>
         </Pressable>
       ))}
@@ -51,13 +44,10 @@ const styles = StyleSheet.create({
     backgroundColor: color.secondary,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
   },
-  thumbImage: { width: "100%", height: "100%" },
   body: { flex: 1, gap: 2 },
   headRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: space.sm },
-  product: { ...t.body, fontWeight: "600", color: color.foreground, flex: 1 },
+  label: { ...t.body, fontWeight: "600", color: color.foreground, flex: 1 },
   date: { ...t.bodySmall, color: color.mutedForeground },
-  labelRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  label: { ...t.bodySmall, color: color.mutedForeground },
+  product: { ...t.bodySmall, color: color.mutedForeground },
 });
