@@ -1,6 +1,7 @@
 import {
   View,
   Text,
+  Image,
   Pressable,
   ScrollView,
   Share,
@@ -42,11 +43,15 @@ export function DiscountDetail({ discount, progressCount, onBack }: props) {
       </View>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.hero}>
-          <Ionicons
-            name="image-outline"
-            size={40}
-            color={color.mutedForeground}
-          />
+          {discount.image ? (
+            <Image source={discount.image} style={styles.heroImage} resizeMode="cover" />
+          ) : (
+            <Ionicons
+              name="image-outline"
+              size={40}
+              color={color.mutedForeground}
+            />
+          )}
         </View>
         <View style={styles.body}>
           <Text style={styles.actor}>{discount.actorName}</Text>
@@ -91,7 +96,9 @@ const styles = StyleSheet.create({
     backgroundColor: color.secondary,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
+  heroImage: { width: "100%", height: "100%" },
   logo: {
     position: "absolute",
     top: space.md,

@@ -58,6 +58,7 @@ export type discount = {
   description: string;
   terms: string;
   threshold: { count: number; period: period };
+  image?: import('react-native').ImageSourcePropType;
 };
 
 export type benefit = {
@@ -215,6 +216,7 @@ const discounts: discount[] = [
     description: 'Owners who keep logging care get a running discount on new Iittala homeware.',
     terms: 'One redemption per unlocked period. Cannot combine with other offers.',
     threshold: { count: 3, period: 'week' },
+    image: require('../../../assets/discounts/iittala.jpg'),
   },
   {
     id: 'd2',
