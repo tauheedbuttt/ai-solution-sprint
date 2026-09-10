@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createCareLoopMcpServer } from './mcp/server.js';
 
 const app = express();
@@ -53,11 +54,31 @@ app.post('/message', (req: Request, res: Response) => handlePostMessage(req, res
 app.get('/api/sse', (req: Request, res: Response) => handleSseRequest(req, res, '/api/message'));
 app.post('/api/message', (req: Request, res: Response) => handlePostMessage(req, res));
 
+async function handleStreamableHttp(req: Request, res: Response) {
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const server = createCareLoopMcpServer();
+  res.on('close', () => {
+    transport.close();
+    server.close();
+  });
+  await server.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+}
+
+app.post('/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+app.get('/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+app.delete('/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+
+app.post('/api/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+app.get('/api/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+app.delete('/api/mcp', (req: Request, res: Response) => handleStreamableHttp(req, res));
+
 app.get('/', (_req: Request, res: Response) => {
   res.json({
     name: 'CareLoop MCP Server',
     status: 'running',
     endpoints: {
+      mcp: '/mcp or /api/mcp',
       sse: '/sse or /api/sse',
       message: '/message or /api/message',
       health: '/health',
