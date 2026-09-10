@@ -226,6 +226,7 @@ const discounts: discount[] = [
     description: 'Consistent care logging unlocks discounted filters and spare parts for your EcoBrew machine.',
     terms: 'Valid at ecobrew.com checkout. Excludes bundles.',
     threshold: { count: 10, period: 'month' },
+    image: require('../../../assets/discounts/ecobrew.jpg'),
   },
   {
     id: 'd3',
@@ -235,6 +236,7 @@ const discounts: discount[] = [
     description: 'Log any care today and FixIt Helsinki waives the diagnostic fee on your next repair.',
     terms: 'One free diagnostic per calendar day. Parts and labor charged separately.',
     threshold: { count: 1, period: 'day' },
+    image: require('../../../assets/discounts/fixit.jpg'),
   },
   {
     id: 'd4',
@@ -244,6 +246,7 @@ const discounts: discount[] = [
     description: 'Active loggers this week get a companion repair slot at no extra cost.',
     terms: 'Subject to slot availability at the Kallio location.',
     threshold: { count: 5, period: 'week' },
+    image: require('../../../assets/discounts/repaircafe.jpg'),
   },
   {
     id: 'd5',
@@ -253,6 +256,7 @@ const discounts: discount[] = [
     description: 'Owners who log care through the month unlock a storewide homeware discount.',
     terms: 'Valid in-store and online. Excludes gift cards.',
     threshold: { count: 4, period: 'month' },
+    image: require('../../../assets/discounts/stockmann.png'),
   },
   {
     id: 'd6',
@@ -262,6 +266,7 @@ const discounts: discount[] = [
     description: 'Log care today and take €10 off any order placed the same day.',
     terms: 'Minimum order €50. One use per day.',
     threshold: { count: 2, period: 'day' },
+    image: require('../../../assets/discounts/verkkokauppa.webp'),
   },
   {
     id: 'd7',
@@ -271,6 +276,7 @@ const discounts: discount[] = [
     description: 'A full year of consistent logging earns residents a free year of Helsinki Card Lite.',
     terms: 'One card per resident per year. Non-transferable.',
     threshold: { count: 12, period: 'year' },
+    image: require('../../../assets/discounts/helsinkicard.jpg'),
   },
   {
     id: 'd8',
@@ -280,6 +286,7 @@ const discounts: discount[] = [
     description: 'Espoo residents who log care through the month earn a free month of public transit.',
     terms: 'Redeemable at any HSL service point in Espoo.',
     threshold: { count: 3, period: 'month' },
+    image: require('../../../assets/discounts/espoogreenpass.png'),
   },
 ];
 
