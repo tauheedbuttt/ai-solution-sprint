@@ -2,8 +2,8 @@ import { supabase } from '../config/supabaseClient.js';
 import { productRow, toDetail, toListItem, toRecentLogItems } from '../types/product.js';
 import { embedText } from './embedding.service.js';
 
-const listColumns = 'id, name, brand, category, status, care_score';
-const detailColumns = 'id, name, brand, category, status, care_score, scores, care_logs(*), repair_requests(*), next_life_routes(*)';
+const listColumns = 'id, name, brand, category, status, care_score, image_url';
+const detailColumns = 'id, name, brand, category, status, care_score, scores, image_url, care_logs(*), repair_requests(*), next_life_routes(*)';
 
 export type agentProductFilter = { query?: string; category?: string; brand?: string; status?: string };
 

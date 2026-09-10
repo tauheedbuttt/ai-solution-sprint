@@ -12,14 +12,28 @@ create table if not exists careloop.products (
 alter table careloop.products drop constraint if exists products_status_check;
 alter table careloop.products add constraint products_status_check check (status in ('active', 'draft', 'routed'));
 
-insert into careloop.products (id, name, brand, category, status, care_score, scores) values
-  ('p1', 'EcoBrew Coffee Maker', 'EcoBrew', 'Appliances', 'active', 78,
-    '{"health":{"value":82,"tag":"Low-tox"},"planet":{"value":64,"tag":"Recycled inputs"},"ethics":{"value":48,"tag":"Partial audit"},"longevity":{"value":91,"tag":"Repairable"}}'),
-  ('p2', 'Trailhead Backpack', 'Trailhead', 'Outdoor', 'active', 64,
-    '{"health":{"value":70,"tag":"Low-tox"},"planet":{"value":58,"tag":"Recycled inputs"},"ethics":{"value":66,"tag":"Verified audit"},"longevity":{"value":75,"tag":"Repairable"}}'),
-  ('p3', 'Nordic Wool Sweater', null, 'Clothing', 'draft', null, null),
-  ('cat1', 'Aalto Table Lamp', 'Iittala', 'Home', 'active', null, null)
-on conflict (id) do nothing;
+alter table careloop.products add column if not exists image_url text;
+
+insert into careloop.products (id, name, brand, category, status, care_score, scores, image_url) values
+  ('p1', 'Careloop Coffee Machine', 'Careloop', 'Appliances', 'active', 78,
+    '{"health":{"value":82,"tag":"Low-tox"},"planet":{"value":64,"tag":"Recycled inputs"},"ethics":{"value":48,"tag":"Partial audit"},"longevity":{"value":91,"tag":"Repairable"}}',
+    'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/coffee.jpg'),
+  ('p2', 'Careloop Air Fryer', 'Careloop', 'Appliances', 'active', 64,
+    '{"health":{"value":70,"tag":"Low-tox"},"planet":{"value":58,"tag":"Recycled inputs"},"ethics":{"value":66,"tag":"Verified audit"},"longevity":{"value":75,"tag":"Repairable"}}',
+    'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/airfryer.jpg'),
+  ('p3', 'Careloop Microwave Oven', 'Careloop', 'Appliances', 'active', 70,
+    '{"health":{"value":75,"tag":"Low-tox"},"planet":{"value":60,"tag":"Recycled inputs"},"ethics":{"value":55,"tag":"Partial audit"},"longevity":{"value":80,"tag":"Repairable"}}',
+    'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/microwave.jpg'),
+  ('cat1', 'Aalto Table Lamp', 'Iittala', 'Home', 'active', null, null,
+    'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/lamp.jpg')
+on conflict (id) do update set
+  name = excluded.name,
+  brand = excluded.brand,
+  category = excluded.category,
+  status = excluded.status,
+  care_score = excluded.care_score,
+  scores = excluded.scores,
+  image_url = excluded.image_url;
 
 create table if not exists careloop.care_logs (
   id uuid primary key default gen_random_uuid(),

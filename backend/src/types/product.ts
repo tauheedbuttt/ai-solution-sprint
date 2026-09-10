@@ -18,6 +18,7 @@ export type productRow = {
   status: status;
   care_score: number | null;
   scores: scoreBreakdown | null;
+  image_url: string | null;
   care_logs?: careLogRow[];
   repair_requests?: repairRequestRow[];
   next_life_routes?: nextLifeRouteRow[];
@@ -30,6 +31,7 @@ export type productListItem = {
   category: string;
   status: status;
   careScore?: number;
+  imageUrl?: string;
 };
 
 export type productDetail = productListItem & {
@@ -37,7 +39,7 @@ export type productDetail = productListItem & {
   logs?: logItem[];
 };
 
-export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string };
+export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string; productImageUrl?: string };
 
 const careLabel: Record<string, string> = { clean: 'Cleaned', store: 'Stored', rotate: 'Rotated', service: 'Serviced' };
 const routeLabel: Record<string, string> = {
@@ -81,6 +83,7 @@ export function toListItem(row: productRow): productListItem {
     category: row.category,
     status: row.status,
     careScore: row.care_score ?? undefined,
+    imageUrl: row.image_url ?? undefined,
   };
 }
 
@@ -94,7 +97,13 @@ export function toDetail(row: productRow): productDetail {
 
 export function toRecentLogItems(rows: productRow[], limit: number): recentLogItem[] {
   const all = rows.flatMap((row) =>
-    combineLogs(row).map((log) => ({ ...log, productId: row.id, productName: row.name, productBrand: row.brand ?? undefined })),
+    combineLogs(row).map((log) => ({
+      ...log,
+      productId: row.id,
+      productName: row.name,
+      productBrand: row.brand ?? undefined,
+      productImageUrl: row.image_url ?? undefined,
+    })),
   );
   return all.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, limit);
 }

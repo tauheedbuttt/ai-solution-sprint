@@ -19,7 +19,7 @@ export type logKind = 'care' | 'repair' | 'nextLife';
 
 export type logItem = { id: string; kind: logKind; label: string; date: string; note?: string };
 
-export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string };
+export type recentLogItem = logItem & { productId: string; productName: string; productBrand?: string; productImageUrl?: string };
 
 export type product = {
   id: string;
@@ -28,6 +28,7 @@ export type product = {
   category: string;
   status: status;
   careScore?: number;
+  imageUrl?: string;
   scores?: scoreBreakdown;
   logs?: logItem[];
 };

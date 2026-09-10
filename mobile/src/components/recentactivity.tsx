@@ -1,6 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color, borderWidth, type as t, space } from "../theme/tokens";
+import { color, type as t, space } from "../theme/tokens";
 import type { recentLogItem } from "../services/api";
 
 function formatDate(iso: string): string {
@@ -20,7 +20,11 @@ export function RecentActivity({ items, onSelectProduct }: { items: recentLogIte
       {items.map((item) => (
         <Pressable key={item.id} style={styles.row} onPress={() => onSelectProduct(item.productId)}>
           <View style={styles.thumb}>
-            <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
+            {item.productImageUrl ? (
+              <Image source={{ uri: item.productImageUrl }} style={styles.thumbImage} resizeMode="cover" />
+            ) : (
+              <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
+            )}
           </View>
           <View style={styles.body}>
             <View style={styles.headRow}>
@@ -45,11 +49,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     backgroundColor: color.secondary,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
+  thumbImage: { width: "100%", height: "100%" },
   body: { flex: 1, gap: 2 },
   headRow: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: space.sm },
   product: { ...t.body, fontWeight: "600", color: color.foreground, flex: 1 },

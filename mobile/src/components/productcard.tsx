@@ -1,6 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { color, borderWidth, type as t, space } from "../theme/tokens";
+import { color, type as t, space } from "../theme/tokens";
 import { ScoreRing } from "./scorering";
 import type { product } from "../services/api";
 
@@ -8,7 +8,11 @@ export function ProductCard({ product, onPress }: { product: product; onPress?: 
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.image}>
-        <Ionicons name="image-outline" size={28} color={color.mutedForeground} />
+        {product.imageUrl ? (
+          <Image source={{ uri: product.imageUrl }} style={styles.thumb} resizeMode="cover" />
+        ) : (
+          <Ionicons name="image-outline" size={28} color={color.mutedForeground} />
+        )}
         {product.careScore !== undefined ? (
           <View style={styles.badge}>
             <ScoreRing score={product.careScore} size={44} />
@@ -31,11 +35,11 @@ const styles = StyleSheet.create({
   image: {
     aspectRatio: 1,
     backgroundColor: color.secondary,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
+  thumb: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   badge: { position: "absolute", top: space.sm, right: space.sm },
   body: { gap: 2 },
   brand: { ...t.eyebrow, color: color.mutedForeground },

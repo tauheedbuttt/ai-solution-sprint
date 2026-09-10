@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { color, borderWidth, radius, type as t, space } from '../theme/tokens';
@@ -38,7 +38,11 @@ export function ProductListSearch({ title, onClose, onSelect }: props) {
             {products.map((p) => (
               <Pressable key={p.id} style={styles.row} onPress={() => onSelect(p)}>
                 <View style={styles.thumb}>
-                  <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
+                  {p.imageUrl ? (
+                    <Image source={{ uri: p.imageUrl }} style={styles.thumbImage} resizeMode="cover" />
+                  ) : (
+                    <Ionicons name="image-outline" size={18} color={color.mutedForeground} />
+                  )}
                 </View>
                 <View style={styles.rowBody}>
                   <Text style={styles.rowTitle}>{p.name}</Text>
@@ -72,11 +76,11 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: radius.md,
     backgroundColor: color.secondary,
-    borderWidth: borderWidth.hairline,
-    borderColor: color.border,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
+  thumbImage: { width: '100%', height: '100%' },
   rowBody: { flex: 1, gap: 2 },
   rowTitle: { ...t.body, color: color.foreground },
   rowSubtitle: { ...t.bodySmall, color: color.mutedForeground },

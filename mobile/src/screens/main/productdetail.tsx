@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, Text, Image, ScrollView, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { color, borderWidth, type as t, space } from "../../theme/tokens";
@@ -48,7 +48,11 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
       ) : (
         <ScrollView style={styles.scroll}>
           <View style={styles.hero}>
-            <Ionicons name="image-outline" size={48} color={color.mutedForeground} />
+            {product.imageUrl ? (
+              <Image source={{ uri: product.imageUrl }} style={styles.heroImage} resizeMode="cover" />
+            ) : (
+              <Ionicons name="image-outline" size={48} color={color.mutedForeground} />
+            )}
             {product.careScore !== undefined ? (
               <View style={styles.badge}>
                 <ScoreRing score={product.careScore} />
@@ -134,11 +138,11 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     backgroundColor: color.secondary,
-    borderBottomWidth: borderWidth.hairline,
-    borderBottomColor: color.border,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
   },
+  heroImage: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 },
   badge: { position: "absolute", top: space.md, right: space.md },
   body: { padding: space.lg, gap: space.xs },
   brand: { ...t.eyebrow, color: color.mutedForeground },
