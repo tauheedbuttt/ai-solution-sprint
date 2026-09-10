@@ -6,7 +6,7 @@ import type { event } from '../services/api';
 
 const screenWidth = Dimensions.get('window').width;
 
-export function EventCarousel({ events }: { events: event[] }) {
+export function EventCarousel({ events, onSelect }: { events: event[]; onSelect?: (event: event) => void }) {
   const [pageWidth, setPageWidth] = useState(screenWidth);
   const [index, setIndex] = useState(0);
 
@@ -28,7 +28,7 @@ export function EventCarousel({ events }: { events: event[] }) {
       >
         {events.map((item) => (
           <View key={item.id} style={[styles.page, { width: pageWidth }]}>
-            <EventCard title={item.title} subtitle={item.subtitle} />
+            <EventCard title={item.title} subtitle={item.subtitle} onPress={onSelect ? () => onSelect(item) : undefined} />
           </View>
         ))}
       </ScrollView>

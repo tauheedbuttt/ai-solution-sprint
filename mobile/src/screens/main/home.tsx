@@ -11,8 +11,11 @@ import { ProductCardSkeleton } from "../../components/productcardskeleton";
 import { ProductListSearch } from "../../components/productlistsearch";
 import { RecentActivity } from "../../components/recentactivity";
 import { Sheet } from "../../components/sheet";
+import { EventLogChoice } from "../../components/eventlogchoice";
 import { ProductDetailScreen } from "./productdetail";
-import { api, type event, type summary } from "../../services/api";
+import { LogFlow } from "../capture/logflow";
+import { AiChat } from "../capture/aichat";
+import { api, type event, type product, type summary } from "../../services/api";
 
 const RECENT_PRODUCTS_LIMIT = 3;
 const RECENT_LOGS_LIMIT = 5;
@@ -22,6 +25,9 @@ export function HomeScreen() {
   const [summary, setSummary] = useState<summary>();
   const [openProductId, setOpenProductId] = useState<string | null>(null);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [chosenEvent, setChosenEvent] = useState<event | null>(null);
+  const [aiEvent, setAiEvent] = useState<event | null>(null);
+  const [manualLog, setManualLog] = useState<{ event: event; product: product } | null>(null);
   const queryClient = useQueryClient();
 
   const { data: products = [], isLoading: productsLoading } = useQuery({
@@ -61,7 +67,7 @@ export function HomeScreen() {
           </View>
         ) : null}
 
-        <EventCarousel events={events} />
+        <EventCarousel events={events} onSelect={setChosenEvent} />
 
         {recentLogs.length > 0 ? (
           <View style={styles.section}>
@@ -103,6 +109,42 @@ export function HomeScreen() {
             setOpenProductId(p.id);
           }}
         />
+      </Sheet>
+
+      <EventLogChoice
+        event={chosenEvent}
+        onClose={() => setChosenEvent(null)}
+        onChooseAi={() => {
+          if (!chosenEvent) return;
+          setAiEvent(chosenEvent);
+          setChosenEvent(null);
+        }}
+        onChooseManual={async () => {
+          if (!chosenEvent) return;
+          const event = chosenEvent;
+          setChosenEvent(null);
+          const product = await api.products.get(event.productId);
+          if (product) setManualLog({ event, product });
+        }}
+      />
+
+      <Sheet visible={!!aiEvent} onClose={() => setAiEvent(null)}>
+        {aiEvent ? <AiChat onClose={() => setAiEvent(null)} initialPrompt={aiEvent.aiPrompt} /> : null}
+      </Sheet>
+
+      <Sheet visible={!!manualLog} onClose={() => setManualLog(null)}>
+        {manualLog ? (
+          <LogFlow
+            initialProduct={manualLog.product}
+            initialAction={manualLog.event.action}
+            onClose={() => setManualLog(null)}
+            onDone={() => {
+              setManualLog(null);
+              queryClient.invalidateQueries({ queryKey: ["recentLogs"] });
+              queryClient.invalidateQueries({ queryKey: ["products"] });
+            }}
+          />
+        ) : null}
       </Sheet>
     </>
   );

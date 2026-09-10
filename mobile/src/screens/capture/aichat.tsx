@@ -135,9 +135,9 @@ function ToolCard({ step }: { step: step }) {
   );
 }
 
-export function AiChat({ onClose }: { onClose: () => void }) {
+export function AiChat({ onClose, initialPrompt }: { onClose: () => void; initialPrompt?: string }) {
   const [messages, setMessages] = useState<message[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(initialPrompt ?? "");
   const [busy, setBusy] = useState(false);
   const [reactions, setReactions] = useState<
     Record<string, reaction | undefined>

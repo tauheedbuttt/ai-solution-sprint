@@ -33,10 +33,15 @@ export type product = {
   logs?: logItem[];
 };
 
+export type eventAction = 'care' | 'repair' | 'nextLife';
+
 export type event = {
   id: string;
   title: string;
   subtitle: string;
+  productId: string;
+  action: eventAction;
+  aiPrompt: string;
 };
 
 export type partner = {
@@ -202,9 +207,30 @@ const partners: partner[] = [
 ];
 
 const events: event[] = [
-  { id: 'e1', title: 'Your backpack care streak', subtitle: '2 events logged this month' },
-  { id: 'e2', title: 'Warranty reminder', subtitle: 'EcoBrew Coffee Maker, check warranty status' },
-  { id: 'e3', title: 'Community tip', subtitle: 'New repair note shared for wool sweaters' },
+  {
+    id: 'e1',
+    title: 'Give your Air Fryer a clean',
+    subtitle: 'Oil buildup after regular use slows it down, log a quick clean today',
+    productId: 'p2',
+    action: 'care',
+    aiPrompt: 'Log a clean for my Air Fryer, I ',
+  },
+  {
+    id: 'e2',
+    title: 'Coffee Machine repair still open',
+    subtitle: 'Grinder jam reported 38 days ago, follow up with FixIt Helsinki',
+    productId: 'p1',
+    action: 'repair',
+    aiPrompt: 'Update the Coffee Machine repair, ',
+  },
+  {
+    id: 'e3',
+    title: 'Microwave Oven sitting unused',
+    subtitle: 'No activity logged yet, consider giving it a next life instead of storage',
+    productId: 'p3',
+    action: 'nextLife',
+    aiPrompt: 'Give my Microwave Oven a next life, ',
+  },
 ];
 
 const discounts: discount[] = [

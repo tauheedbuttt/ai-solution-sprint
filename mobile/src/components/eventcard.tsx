@@ -1,19 +1,20 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { color, borderWidth, type as t, space } from '../theme/tokens';
 
 type props = {
   title: string;
   subtitle: string;
+  onPress?: () => void;
 };
 
-export function EventCard({ title, subtitle }: props) {
+export function EventCard({ title, subtitle, onPress }: props) {
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={onPress} disabled={!onPress}>
       <Ionicons name="sparkles" size={18} color={color.mint} />
       <Text style={styles.title} numberOfLines={2}>{title}</Text>
       <Text style={styles.subtitle} numberOfLines={3}>{subtitle}</Text>
-    </View>
+    </Pressable>
   );
 }
 
