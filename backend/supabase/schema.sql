@@ -15,13 +15,13 @@ alter table careloop.products add constraint products_status_check check (status
 alter table careloop.products add column if not exists image_url text;
 
 insert into careloop.products (id, name, brand, category, status, care_score, scores, image_url) values
-  ('p1', 'Careloop Coffee Machine', 'Careloop', 'Appliances', 'active', 78,
+  ('p1', 'Coffee Machine', 'Careloop', 'Appliances', 'active', 78,
     '{"health":{"value":82,"tag":"Low-tox"},"planet":{"value":64,"tag":"Recycled inputs"},"ethics":{"value":48,"tag":"Partial audit"},"longevity":{"value":91,"tag":"Repairable"}}',
     'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/coffee.jpg'),
-  ('p2', 'Careloop Air Fryer', 'Careloop', 'Appliances', 'active', 64,
+  ('p2', 'Air Fryer', 'Careloop', 'Appliances', 'active', 64,
     '{"health":{"value":70,"tag":"Low-tox"},"planet":{"value":58,"tag":"Recycled inputs"},"ethics":{"value":66,"tag":"Verified audit"},"longevity":{"value":75,"tag":"Repairable"}}',
     'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/airfryer.jpg'),
-  ('p3', 'Careloop Microwave Oven', 'Careloop', 'Appliances', 'active', 70,
+  ('p3', 'Microwave Oven', 'Careloop', 'Appliances', 'active', 70,
     '{"health":{"value":75,"tag":"Low-tox"},"planet":{"value":60,"tag":"Recycled inputs"},"ethics":{"value":55,"tag":"Partial audit"},"longevity":{"value":80,"tag":"Repairable"}}',
     'https://vmmntdvmfmooklchpqvq.supabase.co/storage/v1/object/public/careloop/microwave.jpg'),
   ('cat1', 'Aalto Table Lamp', 'Iittala', 'Home', 'active', null, null,
