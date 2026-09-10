@@ -1,0 +1,12 @@
+# Jury Evaluation Criteria
+
+| Criteria | Description | Score 1 | Score 3 | Score 5 |
+|---|---|---|---|---|
+| Problem | Has the team clearly identified a problem to be solved? | The team has a general idea about the problem they want to solve and what would be the potential use case. | The team has identified a specific problem they want to solve, but only a general idea about what would be the potential use case. | The team has identified a specific problem to be solved for a specific use case. |
+| Solution | Does the solution actually solve the problem that the team is trying to solve? | The solution's connection to the identified problem is unclear or the solution only addresses a minor part of it. | The solution addresses the core of the problem, but some important aspects remain unresolved or the fit is not fully demonstrated. | The solution directly and comprehensively solves the problem the team set out to address. |
+| Value Proposition | Does the solution developed in the project actually solve the identified customer problem? | The solution creates only marginal value compared to not solving the problem at all. | The solution creates value comparable to existing solutions already available. | The solution creates significantly more value than existing alternatives, giving users a clear reason to choose it. |
+| Hackathon results + project proposal | Has the team created something novel that validates the solution idea? | The proposal adds limited value to the existing ecosystem OR there is no validation plan for the solution. | The proposed next steps can be seen as credible and can be implemented. | The proposed next steps are not only credible but also demonstrate genuine novelty, using state-of-the-art methods or combining existing ones in an inventive way. |
+| Team | Does the expertise of the team members match the needs of the project? | The team lacks key expertise to develop the idea into a minimum viable product. | The team misses some expertise to develop the idea into a minimum viable product. | The team has the right expertise to develop the idea into a minimum viable product. |
+| Pitch quality | Is the team able to present the project in a pitch? | The team is not able to convey the problem and solution they have been working on in the hackathon. | The team is able to pitch the why, what and how of the project in a clear and concise manner. | The team is able to deliver a compelling pitch with a clear storyline. |
+
+Source: jury evaluation criteria slide shown at the hackathon.
