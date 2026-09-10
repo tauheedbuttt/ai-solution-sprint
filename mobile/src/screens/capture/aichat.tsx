@@ -37,13 +37,13 @@ type message = {
 };
 type reaction = "up" | "down";
 
-// grounded in the current demo catalog: EcoBrew Coffee Maker (p1, active), Trailhead Backpack (p2, active), Nordic Wool Sweater (p3, draft)
+// grounded in the current demo catalog: Careloop Coffee Machine (p1, active), Careloop Air Fryer (p2, active), Careloop Microwave Oven (p3, active)
 const mutatingTools = new Set(["addCareLog", "addRepairRequest", "addNextLifeRoute"]);
 
 const suggestedPrompts = [
-  "Log a clean for my Trailhead Backpack",
-  "File a repair request for my coffee maker",
-  "Donate my Nordic Wool Sweater",
+  "Log a clean for my air fryer",
+  "File a repair request for my coffee machine",
+  "Recycle my old microwave",
 ];
 
 type jsonTokenKind = "key" | "string" | "literal" | "punct";

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { View, Text, Image, ScrollView, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { color, borderWidth, type as t, space } from "../../theme/tokens";
@@ -11,13 +18,23 @@ import { Timeline } from "../../components/timeline";
 import { LogFlow, type action } from "../capture/logflow";
 import { api } from "../../services/api";
 
-const actions: { value: action; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+const actions: {
+  value: action;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
   { value: "care", label: "Log", icon: "create" },
   { value: "repair", label: "Repair", icon: "build" },
   { value: "nextLife", label: "Next life", icon: "sync" },
 ];
 
-export function ProductDetailScreen({ productId, onClose }: { productId: string; onClose: () => void }) {
+export function ProductDetailScreen({
+  productId,
+  onClose,
+}: {
+  productId: string;
+  onClose: () => void;
+}) {
   const [logAction, setLogAction] = useState<action | null>(null);
   const queryClient = useQueryClient();
 
@@ -32,7 +49,9 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
         <Pressable onPress={onClose} hitSlop={8}>
           <Ionicons name="chevron-back" size={22} color={color.foreground} />
         </Pressable>
-        <Text style={styles.title} numberOfLines={1}>{product?.name ?? ""}</Text>
+        <Text style={styles.title} numberOfLines={1}>
+          {product?.name ?? ""}
+        </Text>
         <View style={styles.spacer} />
       </View>
 
@@ -49,9 +68,17 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
         <ScrollView style={styles.scroll}>
           <View style={styles.hero}>
             {product.imageUrl ? (
-              <Image source={{ uri: product.imageUrl }} style={styles.heroImage} resizeMode="cover" />
+              <Image
+                source={{ uri: product.imageUrl }}
+                style={styles.heroImage}
+                resizeMode="cover"
+              />
             ) : (
-              <Ionicons name="image-outline" size={48} color={color.mutedForeground} />
+              <Ionicons
+                name="image-outline"
+                size={48}
+                color={color.mutedForeground}
+              />
             )}
             {product.careScore !== undefined ? (
               <View style={styles.badge}>
@@ -61,7 +88,9 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
           </View>
 
           <View style={styles.body}>
-            {product.brand ? <Text style={styles.brand}>{product.brand}</Text> : null}
+            {product.brand ? (
+              <Text style={styles.brand}>{product.brand}</Text>
+            ) : null}
             <Text style={styles.name}>{product.name}</Text>
             <Text style={styles.category}>{product.category}</Text>
           </View>
@@ -73,7 +102,7 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
           ) : null}
 
           <View style={styles.logSection}>
-            <Text style={styles.logTitle}>Activity</Text>
+            <Text style={styles.logTitle}>Your Activity</Text>
             <Timeline items={product.logs ?? []} />
           </View>
         </ScrollView>
@@ -94,8 +123,19 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
               disabled={!product}
               onPress={() => setLogAction(a.value)}
             >
-              <Ionicons name={a.icon} size={18} color={primary ? color.primaryForeground : color.foreground} />
-              <Text style={[styles.actionLabel, primary ? styles.actionLabelPrimary : styles.actionLabelSecondary]}>
+              <Ionicons
+                name={a.icon}
+                size={18}
+                color={primary ? color.primaryForeground : color.foreground}
+              />
+              <Text
+                style={[
+                  styles.actionLabel,
+                  primary
+                    ? styles.actionLabelPrimary
+                    : styles.actionLabelSecondary,
+                ]}
+              >
                 {a.label}
               </Text>
             </Pressable>
@@ -111,7 +151,9 @@ export function ProductDetailScreen({ productId, onClose }: { productId: string;
             onClose={() => setLogAction(null)}
             onDone={() => {
               setLogAction(null);
-              queryClient.invalidateQueries({ queryKey: ["product", productId] });
+              queryClient.invalidateQueries({
+                queryKey: ["product", productId],
+              });
             }}
           />
         ) : null}
@@ -167,7 +209,10 @@ const styles = StyleSheet.create({
   },
   actionPrimary: { backgroundColor: color.brownInk },
   actionSecondary: { backgroundColor: "transparent" },
-  actionDivider: { borderLeftWidth: borderWidth.hairline, borderLeftColor: color.border },
+  actionDivider: {
+    borderLeftWidth: borderWidth.hairline,
+    borderLeftColor: color.border,
+  },
   actionLabel: { ...t.body, fontWeight: "600" },
   actionLabelPrimary: { color: color.primaryForeground },
   actionLabelSecondary: { color: color.foreground },
