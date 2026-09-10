@@ -2,10 +2,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { color, type as t, space } from "../theme/tokens";
 import type { recentLogItem } from "../services/api";
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-}
+import { timeAgo } from "../lib/date";
 
 const kindIcon: Record<recentLogItem["kind"], keyof typeof Ionicons.glyphMap> = {
   care: "sparkles-outline",
@@ -25,7 +22,7 @@ export function RecentActivity({ items, onSelectProduct }: { items: recentLogIte
           <View style={styles.body}>
             <View style={styles.headRow}>
               <Text style={styles.label} numberOfLines={1}>{item.label}</Text>
-              <Text style={styles.date}>{formatDate(item.date)}</Text>
+              <Text style={styles.date}>{timeAgo(item.date)}</Text>
             </View>
             <Text style={styles.product} numberOfLines={1}>{item.productName}</Text>
           </View>

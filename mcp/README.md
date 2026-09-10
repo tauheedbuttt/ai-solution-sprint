@@ -1,6 +1,6 @@
 # CareLoop MCP Server
 
-Standalone Model Context Protocol (MCP) server compatible with **Claude Desktop**, **Claude Code**, and **remote MCP clients**. Deploys on Vercel or runs locally via `stdio` / `SSE`.
+Standalone Model Context Protocol (MCP) server for **Claude Desktop**. Deploys on Vercel (Streamable HTTP) or runs locally via `stdio`.
 
 ## Tools Provided
 
@@ -44,9 +44,11 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-### Option 2: Remote / Vercel (`sse`)
-When deployed on Vercel, connect via SSE endpoint:
-`https://your-mcp-app.vercel.app/sse`
+### Option 2: Remote / Vercel (Streamable HTTP)
+Settings → Connectors → Add custom connector, then paste the `/mcp` endpoint:
+`https://your-mcp-app.vercel.app/mcp`
+
+This is the transport Claude Desktop's custom connector UI expects. The server also exposes a legacy `/sse` endpoint, but it isn't used by Claude Desktop and isn't tested.
 
 ---
 
@@ -58,7 +60,7 @@ npm install
 # Local Express SSE Server
 npm run dev
 
-# Local stdio mode (for testing Claude CLI)
+# Local stdio mode (for testing Claude Desktop's stdio option)
 npm run dev:stdio
 
 # Build TypeScript
@@ -67,9 +69,23 @@ npm run build
 
 ## Vercel Deployment
 
-Deploy this directory directly to Vercel:
+This directory is linked to a Vercel project via GitHub integration. Pushing to `main` auto-deploys:
+
+```bash
+git add mcp/
+git commit -m "your message"
+git push origin main
+```
+
+Check deploy status on the commit:
+
+```bash
+gh api repos/<owner>/<repo>/commits/<sha>/status --jq '.statuses[] | select(.context | contains("tcl-mcp"))'
+```
+
+Manual deploy (needs `vercel login` first if the CLI token is stale):
 
 ```bash
 cd mcp
-vercel
+vercel --prod
 ```

@@ -1,13 +1,10 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { color, type as t, space } from '../theme/tokens';
+import { timeAgo } from '../lib/date';
 
 export type timelineKind = 'care' | 'repair' | 'nextLife' | 'origin';
 export type timelineItem = { id: string; kind: timelineKind; label: string; date: string; note?: string };
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-}
 
 const icon: Record<timelineKind, keyof typeof Ionicons.glyphMap> = {
   care: 'sparkles-outline',
@@ -45,7 +42,7 @@ function Row({ item, last }: { item: timelineItem; last: boolean }) {
       </View>
       <View style={styles.rowHead}>
         <Text style={styles.label}>{item.label}</Text>
-        <Text style={styles.date}>{formatDate(item.date)}</Text>
+        <Text style={styles.date}>{timeAgo(item.date)}</Text>
       </View>
       {item.note ? <Text style={styles.note}>{item.note}</Text> : null}
     </View>

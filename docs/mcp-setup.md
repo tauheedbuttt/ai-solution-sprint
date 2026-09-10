@@ -1,58 +1,22 @@
 # CareLoop MCP Server Setup
 
-**Live MCP URL**: `https://tcl-mcp.vercel.app/sse`
+**Live MCP URL**: `https://tcl-mcp.vercel.app/mcp`
+
+Only Claude Desktop is tested. Other clients aren't verified against this server.
 
 ---
 
-## 1. Claude Desktop
-Add to `claude_desktop_config.json`:
+## Claude Desktop
+
+Settings → Connectors → Add custom connector, then paste the URL:
+`https://tcl-mcp.vercel.app/mcp`
+
+Or add directly to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
     "careloop": {
-      "url": "https://tcl-mcp.vercel.app/sse"
-    }
-  }
-}
-```
-
----
-
-## 2. Claude Code CLI
-Run in terminal:
-```bash
-claude mcp add careloop https://tcl-mcp.vercel.app/sse
-```
-
----
-
-## 3. Gemini / Antigravity
-Add to `.gemini/settings.json`:
-```json
-{
-  "mcpServers": {
-    "careloop": {
-      "url": "https://tcl-mcp.vercel.app/sse"
-    }
-  }
-}
-```
-
----
-
-## 4. Cursor IDE
-1. Open **Cursor Settings** → **Features** → **MCP**.
-2. Add Server → Name: `careloop` | Type: `SSE` | URL: `https://tcl-mcp.vercel.app/sse`
-
----
-
-## 5. VS Code (Continue / Roo Code)
-Add to config file:
-```json
-{
-  "mcpServers": {
-    "careloop": {
-      "url": "https://tcl-mcp.vercel.app/sse"
+      "url": "https://tcl-mcp.vercel.app/mcp"
     }
   }
 }
